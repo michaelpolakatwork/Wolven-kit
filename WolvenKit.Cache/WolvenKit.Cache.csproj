@@ -111,7 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollisionCache\CollisionManager.cs" />
-    <Compile Include="Test_Collision.cs" />
+    <Compile Include="ShaderCache.cs" />
     <Compile Include="CollisionCache\CollisionCacheItem.cs" />
     <Compile Include="CollisionCache\Collision_Cache.cs" />
     <Compile Include="DDSHeader.cs" />
