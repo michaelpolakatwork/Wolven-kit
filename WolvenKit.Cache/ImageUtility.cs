@@ -15,7 +15,13 @@ namespace WolvenKit.Cache
         /// Convert a CBitmapTexture's image to a DDS image
         /// </summary>
         /// <returns>A proper dds file</returns>
-        public static Bitmap Xbm2Dds(CR2WExportWrapper imagechunk)
+        public static Bitmap Xbm2Bitmap(CR2WExportWrapper imagechunk)
+        {
+            return Xbm2Dds(imagechunk).BitmapImage;
+        }
+
+
+        public static DdsImage Xbm2Dds(CR2WExportWrapper imagechunk)
         {
             try
             {
@@ -23,6 +29,7 @@ namespace WolvenKit.Cache
                 var compression = imagechunk.GetVariableByName("compression").ToString();
                 var width = uint.Parse(imagechunk.GetVariableByName("width").ToString());
                 var height = uint.Parse(imagechunk.GetVariableByName("height").ToString());
+                var unk2 = uint.Parse(imagechunk.GetVariableByName("unk2").ToString());
                 var mips = imagechunk.GetVariableByName("residentMipIndex")!=null ? uint.Parse(imagechunk.GetVariableByName("residentMipIndex").ToString()) : 0;
                 var tempfile = new MemoryStream();
 
@@ -54,17 +61,18 @@ namespace WolvenKit.Cache
                 
                 using (var bw = new BinaryWriter(tempfile))
                 {
-                    var metadata = new DDSMetadata(width, height, mips, format);
+                    //var metadata = new DDSMetadata(width, height, mips, format);
+                    var metadata = new DDSMetadata(32, 32, 1, format);
                     DDSUtils.GenerateAndWriteHeader(bw.BaseStream, metadata);
 
                     //bw.Write(image.Bytes);  // First 20 bytes is garbage
-                    bw.Write( (new ArraySegment<byte>(image.Bytes, 20, image.Bytes.Length - 20)).ToArray() );
+                    bw.Write( image.Bytes );
                 }
                 tempfile.Flush();
 #if DEBUG
                 //File.WriteAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\asd.dds",tempfile.ToArray());
 #endif
-                return new DdsImage(tempfile.ToArray()).BitmapImage;
+                return new DdsImage(tempfile.ToArray());
             }
             catch(Exception e)
             {

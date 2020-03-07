@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using WolvenKit.CR2W.Types;
 
@@ -88,11 +89,12 @@ namespace WolvenKit.CR2W
             if (arr.data is CVector)
             {
                 var vdata = (CVector) arr.data;
+                var variables = vdata.GetEditableVariables().ToList();
 
-                for (var i = 0; i < vdata.variables.Count; i++)
+                for (var i = 0; i < variables.Count; i++)
                 {
-                    if (vdata.variables[i].Name == name)
-                        return vdata.variables[i];
+                    if (variables[i].Name == name)
+                        return (CVariable)variables[i];
                 }
             }
 

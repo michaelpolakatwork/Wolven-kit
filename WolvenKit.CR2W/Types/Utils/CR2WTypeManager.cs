@@ -84,6 +84,7 @@ namespace WolvenKit.CR2W.Types
             Register("CEvaluatorFloatCurve", new CEvaluatorFloatCurve(null));
 
 
+            
             Register("CVariant", new CVariant(null));
             #endregion
 
@@ -807,8 +808,6 @@ namespace WolvenKit.CR2W.Types
                 "CBehaviorConstraintNodeFloorIKQuadruped",
                 "CBehaviorConstraintNodeFloorIKSixLegs",
                 "STwoBonesIKSolverBoneData",
-                "#CEnvironmentDefinition",
-                "@SItem",
                 "ApertureDofParams",
                 "ARDebugCameraDist",
                 "ARDebugCameraRot",
@@ -3459,12 +3458,10 @@ namespace WolvenKit.CR2W.Types
                 "CxplorationTransitionTurnToJump",
                 "DataBuffer",
                 "DebuffProjectile",
-                "EFactValueChangeMethod",
                 "EmitterDelaySettings",
                 "EmitterDurationSettings",
                 "EntitySlot",
                 "EP1Chandelier",
-                "EQuestPadVibrationStrength",
                 "ErrandDetailsList",
                 "EulerAngles",
                 "FakeProjectile",

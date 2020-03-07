@@ -693,9 +693,9 @@ namespace WolvenKit
         public void LoadDDSFile(string path)
         {
             var dockedImage = new frmTextureFile();
-            dockedImage.Show(dockPanel, DockState.Document);
-            dockedImage.Text = Path.GetFileName(path);
-            dockedImage.LoadImage(path);
+                dockedImage.Show(dockPanel, DockState.Document);
+            dockedImage.Text = "";// Path.GetFileName(path);
+                dockedImage.LoadImage(path);
         }
 
         private void ShowOutput()
@@ -1172,13 +1172,21 @@ namespace WolvenKit
                     {
                         if (bool.Parse(renderW2meshToolStripMenuItem.Tag.ToString()))
                         {
-                            doc.RenderViewer = new Render.frmRender
+                            try
                             {
-                                LoadDocument = LoadDocumentAndGetFile,
-                                MeshFile = doc.File,
-                                DockAreas = DockAreas.Document
-                            };
-                            doc.RenderViewer.Show(doc.FormPanel, DockState.Document);
+                                doc.RenderViewer = new Render.frmRender
+                                {
+                                    LoadDocument = LoadDocumentAndGetFile,
+                                    MeshFile = doc.File,
+                                    DockAreas = DockAreas.Document
+                                };
+                                doc.RenderViewer.Show(doc.FormPanel, DockState.Document);
+                            }
+                            catch (Exception ex)
+                            {
+                                AddOutput(ex.ToString());
+                            }
+                            
                         }
                         break;
                     }

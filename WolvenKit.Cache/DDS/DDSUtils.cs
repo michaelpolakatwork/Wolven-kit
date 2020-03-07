@@ -150,7 +150,7 @@ namespace WolvenKit.Cache.DDS
                         var f = ((float)width + 3) / 4;
                         var p =(Math.Max(1, f) * blocksize);
                         //var p = (uint)(Math.Max(1, ((width + 3) / 4)) * blocksize);*/
-                        uint p = 0;
+                        uint p;
                         if (format == ETextureFormat.TEXFMT_BC1 || format == ETextureFormat.TEXFMT_BC4)
                             p = width * height / 2;
                         else
