@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.Services;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -168,7 +169,7 @@ namespace WolvenKit
                 File = new CR2WFile(reader)
                 {
                     FileName = filename,
-                    EditorController = MainController.Get(),
+                    EditorController = UIController.Get(),
                     LocalizedStringSource = MainController.Get()
                 };
             }
@@ -225,13 +226,13 @@ namespace WolvenKit
             }
             catch (Exception e)
             {
-                MainController.Get().QueueLog("Failed to save the file(s)! They are probably in use.\n" + e.ToString());
+                UIController.Get().QueueLog("Failed to save the file(s)! They are probably in use.\n" + e.ToString());
             }
         }
 
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
+            var theme = UIController.Get().GetTheme();
             this.dockPanel.Theme = theme;
             dockPanel.SaveAsXml(Path.Combine(Path.GetDirectoryName(Configuration.ConfigurationPath),
                 "cr2wdocument_layout.xml"));

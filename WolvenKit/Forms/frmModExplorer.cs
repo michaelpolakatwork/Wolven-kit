@@ -8,8 +8,9 @@ using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.Bundles;
 using WolvenKit.Common.Services;
 using WolvenKit.Common.Wcc;
-using WolvenKit.Mod;
+using WolvenKit.Common;
 using WolvenKit.Services;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -372,7 +373,7 @@ namespace WolvenKit
         {
             if (modFileList.SelectedNode != null)
             {
-                Commonfunctions.ShowFileInExplorer(ActiveMod.FileDirectory + "\\" + modFileList.SelectedNode.FullPath);
+                UICommonfunctions.ShowFileInExplorer(ActiveMod.FileDirectory + "\\" + modFileList.SelectedNode.FullPath);
             }
         }
 
@@ -472,8 +473,8 @@ namespace WolvenKit
 
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
-            MainController.Get().ToolStripExtender.SetStyle(searchstrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            var theme = UIController.Get().GetTheme();
+            UIController.Get().ToolStripExtender.SetStyle(searchstrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
 
             this.modFileList.BackColor = theme.ColorPalette.ToolWindowTabSelectedInactive.Background;
 

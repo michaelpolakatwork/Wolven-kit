@@ -7,6 +7,7 @@ using WolvenKit.Cache;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 using WolvenKit.Render;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -59,7 +60,7 @@ namespace WolvenKit
             {
                 try
                 {
-                    var files = MainController.ImportFile(image, MainController.Get().TextureManager);
+                    var files = UIController.ImportFile(image, MainController.Get().TextureManager);
                     entityImage.Image = new DdsImage(files[0]).BitmapImage;
                     entimgbox.Image = new DdsImage(files[1]).BitmapImage;
                 }

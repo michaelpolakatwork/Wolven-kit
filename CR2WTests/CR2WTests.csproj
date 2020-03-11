@@ -65,6 +65,10 @@
       <Project>{761c5a00-52e7-49d5-9f4f-7be7faf30ac6}</Project>
       <Name>WolvenKit.Nvidia</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WolvenKit.App\WolvenKit.App.csproj">
+      <Project>{6c5ee693-7f88-4259-90d5-9b247e61a15a}</Project>
+      <Name>WolvenKit.App</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WolvenKit.Bundles\WolvenKit.Bundles.csproj">
       <Project>{5bd2292a-24db-4b4a-a5b1-5d435769c289}</Project>
       <Name>WolvenKit.Bundles</Name>

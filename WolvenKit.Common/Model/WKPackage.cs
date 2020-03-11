@@ -10,9 +10,9 @@ using System.Xml.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using Ionic.Zlib;
 
-namespace WolvenKit
+namespace WolvenKit.Common
 {
-    class WKPackage
+    public class WKPackage
     {
         private XDocument Assembly;
         private string Icon;

@@ -46,6 +46,7 @@
             this.ClientSize = new System.Drawing.Size(553, 532);
             this.Controls.Add(this.imageBox1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "frmTextureFile";
             this.Text = "frmTextureFile";
             this.ResumeLayout(false);

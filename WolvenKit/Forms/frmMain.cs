@@ -14,14 +14,12 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using AutoUpdaterDotNET;
 using Dfust.Hotkeys;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
-using Newtonsoft.Json;
+//using ICSharpCode.SharpZipLib.Core;
+//using ICSharpCode.SharpZipLib.Zip;
 using SharpPresence;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
-using WolvenKit.Mod;
 using SearchOption = System.IO.SearchOption;
 using WolvenKit.Common;
 using WolvenKit.Cache;
@@ -37,7 +35,7 @@ using System.ComponentModel;
 
 namespace WolvenKit
 {
-    
+    using App;
 
     public partial class frmMain : Form
     {
@@ -100,7 +98,7 @@ namespace WolvenKit
 
             this.dockPanel.Theme.Extender.FloatWindowFactory = new CustomFloatWindowFactory();
             visualStudioToolStripExtender1.DefaultRenderer = toolStripRenderer;
-            MainController.Get().ToolStripExtender = visualStudioToolStripExtender1;
+            UIController.Get().ToolStripExtender = visualStudioToolStripExtender1;
             ApplyCustomTheme();
 
             UpdateTitle();
@@ -127,7 +125,7 @@ namespace WolvenKit
             hotkeys.RegisterHotkey(Keys.F1, HKHelp, "Help");
             hotkeys.RegisterHotkey(Keys.Control | Keys.C, HKCopy, "Copy");
             hotkeys.RegisterHotkey(Keys.Control | Keys.V, HKPaste, "Paste");
-            MainController.InitForm(this);
+            UIController.InitForm(this);
 
             Logger = new LoggerService();
             Logger.PropertyChanged += LoggerUpdated;
@@ -144,19 +142,19 @@ namespace WolvenKit
         #region Methods
         public void GlobalApplyTheme()
         {
-            dockPanel.SaveAsXml(Path.Combine(Path.GetDirectoryName(Configuration.ConfigurationPath), "main_layout.xml"));
+            dockPanel.SaveAsXml(Path.Combine(Path.GetDirectoryName(UIConfiguration.ConfigurationPath), "main_layout.xml"));
 
             CloseWindows();
 
             this.ApplyCustomTheme();
 
-            dockPanel.LoadFromXml(Path.Combine(Path.GetDirectoryName(Configuration.ConfigurationPath), "main_layout.xml"), DeserializeDockContent);
+            dockPanel.LoadFromXml(Path.Combine(Path.GetDirectoryName(UIConfiguration.ConfigurationPath), "main_layout.xml"), DeserializeDockContent);
 
             ReopenWindows();
         }
         private void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
+            var theme = UIController.Get().GetTheme();
             this.dockPanel.Theme = theme;
             visualStudioToolStripExtender1.SetStyle(menuStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
             visualStudioToolStripExtender1.SetStyle(toolbarToolStrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
@@ -974,21 +972,14 @@ namespace WolvenKit
                 frm.WindowState = FormWindowState.Normal;
                 return;
             }
-            var managers = new List<IWitcherArchive>();
-            if (MainController.Get().BundleManager != null) managers.Add(MainController.Get().BundleManager);
-            if (MainController.Get().SoundManager != null) managers.Add(MainController.Get().SoundManager);
-            if (MainController.Get().TextureManager != null) managers.Add(MainController.Get().TextureManager);
-            if (MainController.Get().CollisionManager != null) managers.Add(MainController.Get().CollisionManager);
-            var modmanagers = new List<IWitcherArchive>();
-            if (MainController.Get().ModBundleManager != null) modmanagers.Add(MainController.Get().ModBundleManager);
-            if (MainController.Get().ModSoundManager != null) modmanagers.Add(MainController.Get().ModSoundManager);
-            if (MainController.Get().ModTextureManager != null) modmanagers.Add(MainController.Get().ModTextureManager);
-            //if (MainController.Get().ModCollisionManager != null) managers.Add(MainController.Get().ModCollisionManager);
+            
 
-            var explorer = new frmAssetBrowser(loadmods ?
-                modmanagers : managers);
-            explorer.RequestFileAdd += Assetbrowser_FileAdd;
-            explorer.OpenPath(browseToPath);
+            
+            var explorer = new frmWPFAssetBrowser();
+            //var explorer = new frmAssetBrowser(loadmods ?  MainController.Get().GetModArchives() : MainController.Get().GetArchives());
+
+            //explorer.RequestFileAdd += Assetbrowser_FileAdd;
+            //explorer.OpenPath(browseToPath);
             Rectangle floatWindowBounds = new Rectangle() { Width = 827, Height = 564 };
             explorer.Show(dockPanel, floatWindowBounds);
         }
@@ -1492,7 +1483,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            var config = MainController.Get().Configuration;
+            var config = UIController.Get().Configuration;
 
             config.MainState = WindowState;
 
@@ -1506,7 +1497,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
         private void frmMain_Shown(object sender, EventArgs e)
         {
             ResetWindows();
-            var config = MainController.Get().Configuration;
+            var config = UIController.Get().Configuration;
             Size = config.MainSize;
             Location = config.MainLocation;
             WindowState = config.MainState;
@@ -1863,7 +1854,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
                     {
                         try
                         {
-                            MainController.Get()?.Window?.ModExplorer?.StopMonitoringDirectory();
+                            UIController.Get()?.Window?.ModExplorer?.StopMonitoringDirectory();
                             //Close all docs so they won't cause problems
                             OpenDocuments.ForEach(x => x.Close());
                             //Move the files directory
@@ -1888,7 +1879,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
                     {
                         openMod(MainController.Get().ActiveMod?.FileName);
                     }
-                    Commonfunctions.SendNotification("Succesfully updated mod settings!");
+                    UICommonfunctions.SendNotification("Succesfully updated mod settings!");
                 }
             }
         }
@@ -1921,7 +1912,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
                         pi.ShowDialog();
                 }
                 else
-                    Commonfunctions.SendNotification("Invalid file!");
+                    UICommonfunctions.SendNotification("Invalid file!");
             }
         }
 

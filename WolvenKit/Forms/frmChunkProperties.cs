@@ -10,6 +10,7 @@ using WolvenKit.CR2W;
 using WolvenKit.CR2W.Editors;
 using WolvenKit.CR2W.Types;
 using WolvenKit.Services;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -393,7 +394,7 @@ namespace WolvenKit
         
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
+            var theme = UIController.Get().GetTheme();
 
             this.treeView.BackColor = theme.ColorPalette.ToolWindowTabSelectedInactive.Background;
             this.treeView.AlternateRowBackColor = theme.ColorPalette.OverflowButtonHovered.Background;

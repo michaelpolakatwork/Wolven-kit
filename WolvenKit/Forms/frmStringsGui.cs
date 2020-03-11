@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -44,7 +45,7 @@ namespace WolvenKit
 
         DataTable dataTableGridViewSource;
 
-        Mod.W3Mod activeMod = MainController.Get().Window.ActiveMod;
+        Common.W3Mod activeMod = UIController.Get().Window.ActiveMod;
 
         public frmStringsGui()
         {

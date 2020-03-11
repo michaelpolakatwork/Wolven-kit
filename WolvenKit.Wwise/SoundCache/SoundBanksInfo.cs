@@ -62,7 +62,10 @@ namespace WolvenKit.Wwise
 
         public SoundBankFile(XElement elem)
         {
-            Id = elem.Attribute("Id")?.Value;
+            if (elem == null)
+                return;
+
+            Id = elem?.Attribute("Id")?.Value;
             Language = elem.Attribute("Language")?.Value;
             ShortName = elem.Element("ShortName")?.Value;
             PrefetchMilliseconds = elem.Attribute("PrefetchMilliseconds")?.Value;

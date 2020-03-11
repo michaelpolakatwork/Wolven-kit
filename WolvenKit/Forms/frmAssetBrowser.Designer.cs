@@ -41,22 +41,17 @@ namespace WolvenKit
             this.colCompressiontype = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.filebrowserMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToDLCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.copyPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.markToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.markAllFilesOfFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeImages = new System.Windows.Forms.ImageList(this.components);
             this.pathPanel = new System.Windows.Forms.Panel();
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.ClearFiles = new System.Windows.Forms.Button();
-            this.MarkSelected = new System.Windows.Forms.Button();
             this.filetypeCB = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.pathlistview = new System.Windows.Forms.ListView();
-            this.columnPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clearSearch = new System.Windows.Forms.Button();
             this.regexCheckbox = new System.Windows.Forms.CheckBox();
             this.currentfolderCheckBox = new System.Windows.Forms.CheckBox();
@@ -76,6 +71,8 @@ namespace WolvenKit
             this.addDLCFile = new System.Windows.Forms.Button();
             this.homeBTN = new System.Windows.Forms.Button();
             this.fileSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.previewImageBox = new Cyotek.Windows.Forms.ImageBox();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filebrowserMenuStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSplitContainer)).BeginInit();
@@ -151,32 +148,36 @@ namespace WolvenKit
             // 
             this.filebrowserMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.filebrowserMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyPathToolStripMenuItem,
-            this.markToolStripMenuItem,
-            this.markAllFilesOfFolderToolStripMenuItem});
+            this.addToModToolStripMenuItem,
+            this.addToDLCToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.copyPathToolStripMenuItem});
             this.filebrowserMenuStrip.Name = "filebrowserMenuStrip";
-            this.filebrowserMenuStrip.Size = new System.Drawing.Size(189, 70);
+            this.filebrowserMenuStrip.Size = new System.Drawing.Size(139, 76);
+            // 
+            // addToModToolStripMenuItem
+            // 
+            this.addToModToolStripMenuItem.Name = "addToModToolStripMenuItem";
+            this.addToModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.addToModToolStripMenuItem.Text = "Add to Mod";
+            // 
+            // addToDLCToolStripMenuItem
+            // 
+            this.addToDLCToolStripMenuItem.Name = "addToDLCToolStripMenuItem";
+            this.addToDLCToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.addToDLCToolStripMenuItem.Text = "Add to DLC";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(135, 6);
             // 
             // copyPathToolStripMenuItem
             // 
             this.copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
-            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.copyPathToolStripMenuItem.Text = "Copy Path";
             this.copyPathToolStripMenuItem.Click += new System.EventHandler(this.copyPathToolStripMenuItem_Click);
-            // 
-            // markToolStripMenuItem
-            // 
-            this.markToolStripMenuItem.Name = "markToolStripMenuItem";
-            this.markToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.markToolStripMenuItem.Text = "Mark";
-            this.markToolStripMenuItem.Click += new System.EventHandler(this.markToolStripMenuItem_Click);
-            // 
-            // markAllFilesOfFolderToolStripMenuItem
-            // 
-            this.markAllFilesOfFolderToolStripMenuItem.Name = "markAllFilesOfFolderToolStripMenuItem";
-            this.markAllFilesOfFolderToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-            this.markAllFilesOfFolderToolStripMenuItem.Text = "Mark all files of folder";
-            this.markAllFilesOfFolderToolStripMenuItem.Click += new System.EventHandler(this.markAllFilesOfFolderToolStripMenuItem_Click);
             // 
             // treeImages
             // 
@@ -235,30 +236,6 @@ namespace WolvenKit
             this.label1.TabIndex = 8;
             this.label1.Text = "Search:";
             // 
-            // ClearFiles
-            // 
-            this.ClearFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ClearFiles.Location = new System.Drawing.Point(583, 499);
-            this.ClearFiles.Name = "ClearFiles";
-            this.ClearFiles.Size = new System.Drawing.Size(105, 23);
-            this.ClearFiles.TabIndex = 9;
-            this.ClearFiles.TabStop = false;
-            this.ClearFiles.Text = "Unmark selected";
-            this.ClearFiles.UseVisualStyleBackColor = true;
-            this.ClearFiles.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // MarkSelected
-            // 
-            this.MarkSelected.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.MarkSelected.Location = new System.Drawing.Point(694, 499);
-            this.MarkSelected.Name = "MarkSelected";
-            this.MarkSelected.Size = new System.Drawing.Size(105, 23);
-            this.MarkSelected.TabIndex = 10;
-            this.MarkSelected.TabStop = false;
-            this.MarkSelected.Text = "Mark selected";
-            this.MarkSelected.UseVisualStyleBackColor = true;
-            this.MarkSelected.Click += new System.EventHandler(this.MarkSelected_Click);
-            // 
             // filetypeCB
             // 
             this.filetypeCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -291,53 +268,6 @@ namespace WolvenKit
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 13;
             this.label2.Text = "Extension:";
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(734, 105);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Marked files:";
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(472, 499);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 23);
-            this.button2.TabIndex = 17;
-            this.button2.TabStop = false;
-            this.button2.Text = "Clear marks";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Clear_Click);
-            // 
-            // pathlistview
-            // 
-            this.pathlistview.CausesValidation = false;
-            this.pathlistview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnPath});
-            this.pathlistview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pathlistview.FullRowSelect = true;
-            this.pathlistview.GridLines = true;
-            this.pathlistview.HideSelection = false;
-            this.pathlistview.LargeImageList = this.treeImages;
-            this.pathlistview.Location = new System.Drawing.Point(0, 0);
-            this.pathlistview.Name = "pathlistview";
-            this.pathlistview.ShowItemToolTips = true;
-            this.pathlistview.Size = new System.Drawing.Size(265, 374);
-            this.pathlistview.SmallImageList = this.treeImages;
-            this.pathlistview.TabIndex = 14;
-            this.pathlistview.UseCompatibleStateImageBehavior = false;
-            this.pathlistview.View = System.Windows.Forms.View.Details;
-            // 
-            // columnPath
-            // 
-            this.columnPath.Text = "Path";
-            this.columnPath.Width = 105;
             // 
             // clearSearch
             // 
@@ -414,41 +344,42 @@ namespace WolvenKit
             // detailsToolStripMenuItem
             // 
             this.detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
-            this.detailsToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.detailsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.detailsToolStripMenuItem.Text = "Details";
             this.detailsToolStripMenuItem.Click += new System.EventHandler(this.detailsToolStripMenuItem_Click);
             // 
             // largeIconToolStripMenuItem
             // 
             this.largeIconToolStripMenuItem.Name = "largeIconToolStripMenuItem";
-            this.largeIconToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.largeIconToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.largeIconToolStripMenuItem.Text = "LargeIcon";
             this.largeIconToolStripMenuItem.Click += new System.EventHandler(this.largeIconToolStripMenuItem_Click);
             // 
             // smallIconToolStripMenuItem
             // 
             this.smallIconToolStripMenuItem.Name = "smallIconToolStripMenuItem";
-            this.smallIconToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.smallIconToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.smallIconToolStripMenuItem.Text = "SmallIcon";
             this.smallIconToolStripMenuItem.Click += new System.EventHandler(this.smallIconToolStripMenuItem_Click);
             // 
             // listToolStripMenuItem
             // 
             this.listToolStripMenuItem.Name = "listToolStripMenuItem";
-            this.listToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.listToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.listToolStripMenuItem.Text = "List";
             this.listToolStripMenuItem.Click += new System.EventHandler(this.listToolStripMenuItem_Click);
             // 
             // tileToolStripMenuItem
             // 
             this.tileToolStripMenuItem.Name = "tileToolStripMenuItem";
-            this.tileToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.tileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tileToolStripMenuItem.Text = "Tile";
             this.tileToolStripMenuItem.Click += new System.EventHandler(this.tileToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
-            this.editToolStripMenuItem.Enabled = false;
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.testToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -528,18 +459,33 @@ namespace WolvenKit
             // 
             // fileSplitContainer.Panel2
             // 
-            this.fileSplitContainer.Panel2.Controls.Add(this.pathlistview);
+            this.fileSplitContainer.Panel2.Controls.Add(this.previewImageBox);
             this.fileSplitContainer.Size = new System.Drawing.Size(791, 374);
             this.fileSplitContainer.SplitterDistance = 523;
             this.fileSplitContainer.SplitterWidth = 3;
             this.fileSplitContainer.TabIndex = 29;
+            // 
+            // previewImageBox
+            // 
+            this.previewImageBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.previewImageBox.Location = new System.Drawing.Point(0, 0);
+            this.previewImageBox.Name = "previewImageBox";
+            this.previewImageBox.Size = new System.Drawing.Size(265, 374);
+            this.previewImageBox.TabIndex = 0;
+            this.previewImageBox.Text = "Select file to preview";
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testToolStripMenuItem.Text = "test";
+            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // frmAssetBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(811, 525);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.fileSplitContainer);
             this.Controls.Add(this.homeBTN);
             this.Controls.Add(this.addDLCFile);
@@ -550,12 +496,9 @@ namespace WolvenKit
             this.Controls.Add(this.currentfolderCheckBox);
             this.Controls.Add(this.regexCheckbox);
             this.Controls.Add(this.clearSearch);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.filetypeCB);
-            this.Controls.Add(this.MarkSelected);
-            this.Controls.Add(this.ClearFiles);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.SearchBox);
             this.Controls.Add(this.pathPanel);
@@ -590,23 +533,15 @@ namespace WolvenKit
         private ColumnHeader colType;
         private TextBox SearchBox;
         private Label label1;
-        private Button ClearFiles;
-        private Button MarkSelected;
         private ComboBox filetypeCB;
         private Button button1;
         private Label label2;
-        private Label label3;
-        private Button button2;
-        private ListView pathlistview;
-        private ColumnHeader columnPath;
         private ContextMenuStrip filebrowserMenuStrip;
         private ToolStripMenuItem copyPathToolStripMenuItem;
-        private ToolStripMenuItem markToolStripMenuItem;
         private Button clearSearch;
         private CheckBox regexCheckbox;
         private CheckBox currentfolderCheckBox;
         private CheckBox caseCheckBox;
-        private ToolStripMenuItem markAllFilesOfFolderToolStripMenuItem;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem detailsToolStripMenuItem;
@@ -623,5 +558,10 @@ namespace WolvenKit
         private Button addDLCFile;
         private Button homeBTN;
         private SplitContainer fileSplitContainer;
+        private Cyotek.Windows.Forms.ImageBox previewImageBox;
+        private ToolStripMenuItem addToModToolStripMenuItem;
+        private ToolStripMenuItem addToDLCToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem testToolStripMenuItem;
     }
 }

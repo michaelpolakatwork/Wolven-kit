@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Vlc.DotNet.Core;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.Scaleform;
+using WolvenKit.App;
 using static VGMToolbox.format.MpegStream;
 
 namespace WolvenKit

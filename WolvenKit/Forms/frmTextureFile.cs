@@ -104,5 +104,6 @@ namespace WolvenKit
         {
             ResizeImage();
         }
+
     }
 }

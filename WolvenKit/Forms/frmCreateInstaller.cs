@@ -10,11 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using ICSharpCode.SharpZipLib.Zip;
 using WolvenKit.Common.Services;
+using WolvenKit.App;
 
 namespace WolvenKit.Forms
 {
+    using Common;
+
+
     public partial class frmCreateInstaller : Form
     {
         private Color headercolor = Color.Red;
@@ -88,7 +91,7 @@ namespace WolvenKit.Forms
                     dir.Delete(true);
                 }
             }
-            var packtask = MainController.Get().Window.PackAndInstallMod();
+            var packtask = UIController.Get().Window.PackAndInstallMod();
             await packtask;
             var installdir = Path.Combine(MainController.Get().ActiveMod.ProjectDirectory, @"Installer/");
             if (!Directory.Exists(installdir))
@@ -104,7 +107,7 @@ namespace WolvenKit.Forms
                 return;
             }
             MainController.Get().ProjectStatus = "Ready";
-            Commonfunctions.ShowFileInExplorer(outpath);
+            UICommonfunctions.ShowFileInExplorer(outpath);
         }
 
         private void visualTextBox1_TextChanged(object sender, EventArgs e)

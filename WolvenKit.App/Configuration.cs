@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Serialization;
-using WeifenLuo.WinFormsUI.Docking;
 
-namespace WolvenKit
+namespace WolvenKit.App
 {
     public class Configuration
     {
@@ -13,7 +12,7 @@ namespace WolvenKit
         {
             get
             {
-                var path = Application.ExecutablePath;
+                var path = AppDomain.CurrentDomain.BaseDirectory;
                 var filename = Path.GetFileNameWithoutExtension(path);
                 var dir = Path.GetDirectoryName(path);
                 return Path.Combine(dir ?? "", filename + "_config.xml");
@@ -30,13 +29,9 @@ namespace WolvenKit
         public string TextLanguage { get; set; }
         public string VoiceLanguage { get; set; }
         public string WccLite { get; set; }
-        public Size MainSize { get; set; }
         public string InitialModDirectory { get; set; }
         public string InitialFileDirectory { get; set; }
-        public Point MainLocation { get; set; }
-        public FormWindowState MainState { get; set; }
         public string InitialExportDirectory { get; set; }
-        public EColorThemes ColorTheme { get; set; }
         
 
         [XmlIgnore]
@@ -76,7 +71,6 @@ namespace WolvenKit
             {
                 TextLanguage = "en",
                 VoiceLanguage = "en",
-                ColorTheme = EColorThemes.VS2015Light,
             };
         }
     }

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.Services;
+using WolvenKit.App;
 
 namespace WolvenKit
 {
@@ -225,8 +226,8 @@ namespace WolvenKit
         
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
-            MainController.Get().ToolStripExtender.SetStyle(toolStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            var theme = UIController.Get().GetTheme();
+            UIController.Get().ToolStripExtender.SetStyle(toolStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
 
             this.treeListView.BackColor = theme.ColorPalette.TabButtonSelectedInactivePressed.Background; 
             toolStripSearchBox.BackColor = theme.ColorPalette.ToolWindowCaptionButtonInactiveHovered.Background; 
