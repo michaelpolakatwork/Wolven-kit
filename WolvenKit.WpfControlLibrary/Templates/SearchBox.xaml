@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="WolvenKit.WpfControlLibrary.Templates.SearchBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WolvenKit.WpfControlLibrary.Templates"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="200">
+    
+    
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <BitmapImage x:Key="ResIconSearch" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/Search_glyph71GrayNoHalo_16x.png" />
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Width="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Image Source="{DynamicResource ResIconSearch}" Margin="3"/>
+
+        <TextBox Grid.Column="1" Background="Transparent" 
+                 Padding="2,2,2,2"
+                 Text="{Binding SearchParams.SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                 >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
+            </TextBox.InputBindings>
+        </TextBox>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <Button  Command="{Binding CaseSensitiveCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SearchParams.isRegex}" Value="true">
+                                <Setter Property="Background" Value="Blue"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SearchParams.isRegex}" Value="false">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <StackPanel>
+                    <svgc:SvgViewbox  Margin="2" Height="Auto" Width="Auto" Stretch="Uniform" Source="/Resources/Icons/case-sensitive.svg"/>
+                </StackPanel>
+            </Button>
+            <Button Background="{Binding SearchBackground}" Command="{Binding SearchParams.WholeWordCommand}">
+                <StackPanel>
+                    <svgc:SvgViewbox  Margin="2" Height="Auto" Width="Auto" Stretch="Uniform" Source="/Resources/Icons/whole-word.svg"/>
+                </StackPanel>
+            </Button>
+            <Button Background="{Binding SearchBackground}" Command="{Binding SearchParams.RegexCommand}">
+                <StackPanel>
+                    <svgc:SvgViewbox  Margin="2" Height="Auto" Width="Auto" Stretch="Uniform" Source="/Resources/Icons/regex.svg"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

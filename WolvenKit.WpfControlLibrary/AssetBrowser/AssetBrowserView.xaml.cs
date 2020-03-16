@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WolvenKit.App.ViewModels;
 
 namespace WolvenKit.WpfControlLibrary.AssetBrowser
 {
+    
 
     /// <summary>
     /// Interaction logic for UserControl1.xaml
@@ -27,11 +17,13 @@ namespace WolvenKit.WpfControlLibrary.AssetBrowser
         private void Init(object sender, EventArgs e)
         {
 
-
         }
 
-
-        
+        public AssetBrowserControl(IViewModel viewModel)
+        {
+            // TODO: inject
+            this.DataContext = viewModel;
+        }
     }
 
 
@@ -42,7 +34,7 @@ namespace WolvenKit.WpfControlLibrary.AssetBrowser
         public MyControlEventArgs(bool result)
         {
             _IsOK = result;
-            
+
         }
 
         public bool IsOK
@@ -51,9 +43,4 @@ namespace WolvenKit.WpfControlLibrary.AssetBrowser
             set { _IsOK = value; }
         }
     }
-
-    
-
-
-
 }

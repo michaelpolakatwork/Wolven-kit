@@ -6,6 +6,9 @@ namespace WolvenKit.Wwise.SoundCache
 {
     public class SoundCacheItem : IWitcherFile
     {
+        public string DisplayType => Bundle.TypeName;
+        public string DisplayName => Name;
+
         public IWitcherArchiveType Bundle { get; set; }
         /// <summary>
         /// Name of the bundled item in the archive.

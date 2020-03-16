@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WolvenKit.Common;
 
-namespace WolvenKit
+namespace WolvenKit.Common
 {
     public class WitcherListViewItem : ListViewItem, ICloneable
     {

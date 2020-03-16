@@ -15,15 +15,15 @@ namespace WolvenKit
 {
     public partial class frmAssetBrowser : DockContent
     {
-        public List<string> Autocompletelist;
-        public List<IWitcherFile> FileList = new List<IWitcherFile>();
-        public List<IWitcherArchive> Managers;
+        private List<string> Autocompletelist;
+        private List<IWitcherFile> FileList = new List<IWitcherFile>();
+        private List<IWitcherArchive> Managers;
 
-        public List<string> Files { get; set; }
-        public WitcherTreeNode ActiveNode { get; set; }
-        public WitcherTreeNode RootNode { get; set; }
+        private List<string> Files { get; set; }
+        private WitcherTreeNode ActiveNode { get; set; }
+        private WitcherTreeNode RootNode { get; set; }
 
-        public List<WitcherListViewItem> SelectedPaths
+        private List<WitcherListViewItem> SelectedPaths
         {
             get
             {
@@ -36,7 +36,7 @@ namespace WolvenKit
             }
         }
 
-        public event EventHandler<Tuple<List<IWitcherArchive>, List<WitcherListViewItem>, bool>> RequestFileAdd;
+        private event EventHandler<Tuple<List<IWitcherArchive>, List<WitcherListViewItem>, bool>> RequestFileAdd;
 
         public frmAssetBrowser(List<IWitcherArchive> archives)
         {
@@ -71,7 +71,7 @@ namespace WolvenKit
         {
         }
 
-        public void OpenNode(WitcherTreeNode node,bool reset = false)
+        private void OpenNode(WitcherTreeNode node,bool reset = false)
         {
             if (ActiveNode != node || reset)
             {
@@ -224,7 +224,7 @@ namespace WolvenKit
             }
         }
 
-        public string GetImageKey(string filename)
+        private string GetImageKey(string filename)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace WolvenKit
             return "genericFile";
         }
 
-        public void OpenPath(string browsePath)
+        private void OpenPath(string browsePath)
         {
             var currentNode = RootNode;
             var parts = browsePath.Split('\\');
@@ -284,7 +284,7 @@ namespace WolvenKit
             UpdatePathPanel();
         }
 
-        public void Search(string s, int bundleTypeIdx, int fileTypeIdx)
+        private void Search(string s, int bundleTypeIdx, int fileTypeIdx)
         {
             var extension = "";
             var bundletype = "";
@@ -309,7 +309,7 @@ namespace WolvenKit
             fileListView.Items.AddRange(results.ToArray());
         }
 
-        public List<IWitcherFile> GetFiles(WitcherTreeNode mainnode)
+        private List<IWitcherFile> GetFiles(WitcherTreeNode mainnode)
         {
             var bundfiles = new List<IWitcherFile>();
             if (mainnode?.Files != null)
@@ -323,7 +323,7 @@ namespace WolvenKit
             return bundfiles;
         }
 
-        public Tuple<WitcherListViewItem,IWitcherFile>[] SearchFiles(IWitcherFile[] files, string searchkeyword, string bundletype, string extension)
+        private Tuple<WitcherListViewItem,IWitcherFile>[] SearchFiles(IWitcherFile[] files, string searchkeyword, string bundletype, string extension)
         {
             if (regexCheckbox.Checked)
             {
@@ -371,7 +371,7 @@ namespace WolvenKit
         /// </summary>
         /// <param name="root">Root node.</param>
         /// <returns>Array of collected files.</returns>
-        public WitcherListViewItem[] CollectFiles(WitcherTreeNode root)
+        private WitcherListViewItem[] CollectFiles(WitcherTreeNode root)
         {
             var collectedFilesList = new List<WitcherListViewItem>();
 
@@ -391,7 +391,7 @@ namespace WolvenKit
             return collectedFilesList.ToArray();
         }
 
-        public string[] GetExtensions(params string[] filename)
+        private string[] GetExtensions(params string[] filename)
         {
             var extensions = new List<string>();
             foreach (var file in filename.Where(file => !extensions.Contains(file.Split('.').Last())))
@@ -571,11 +571,11 @@ namespace WolvenKit
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var formPreview = new Forms.frmWPFAssetBrowser
+            /*var formPreview = new Forms.frmWPFAssetBrowser
             {
 
             };
-            formPreview.Show();
+            formPreview.Show();*/
         }
     }
 }

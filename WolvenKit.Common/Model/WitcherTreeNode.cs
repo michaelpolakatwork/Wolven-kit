@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace WolvenKit.Common
 {
-    public class WitcherTreeNode
+    public class WitcherTreeNode : FolderBrowserNode, IFileExplorerItem
     {
         public WitcherTreeNode()
         {
             Directories = new Dictionary<string, WitcherTreeNode>();
             Files = new Dictionary<string, List<IWitcherFile>>();
             Name = "";
+
+            
+            DisplayType = typeof(WitcherTreeNode).Name;
         }
 
-        public string FullPath
+        public new string DisplayName => Name;
+
+        public new string FullPath
         {
             get
             {
@@ -38,5 +44,17 @@ namespace WolvenKit.Common
         public WitcherTreeNode Parent { get; set; }
         public Dictionary<string, WitcherTreeNode> Directories { get; set; }
         public Dictionary<string, List<IWitcherFile>> Files { get; set; }
+
+        public new ObservableCollection<WitcherTreeNode> DisplayChildren => new ObservableCollection<WitcherTreeNode>( Directories.Values);
+
+        public List<IWitcherFile> FilesList => Files.SelectMany(_ => _.Value).ToList();
+        public List<IFileExplorerItem> Browseables { 
+            get
+            {
+                List<IFileExplorerItem> ret = new List<IFileExplorerItem>(Directories.Values.ToList());
+                ret.AddRange(FilesList);
+                return ret;
+            }
+        }
     }
 }

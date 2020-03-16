@@ -36,6 +36,7 @@ using System.ComponentModel;
 namespace WolvenKit
 {
     using App;
+    using WolvenKit.App.ViewModels;
 
     public partial class frmMain : Form
     {
@@ -55,6 +56,10 @@ namespace WolvenKit
                 UpdateTitle();
             }
         }
+
+        public AssetBrowserViewModel AssetBrowserVM { get; set; }
+
+
         #endregion
 
         #region Fields
@@ -958,30 +963,34 @@ namespace WolvenKit
         /// </summary>
         /// <param name="loadmods">Load the mod files</param>
         /// <param name="browseToPath">The path to browse to</param>
-        private void AddModFile(bool loadmods, string browseToPath = "")
+        private async void AddModFile(bool loadmods, string browseToPath = "")
         {
             if (ActiveMod == null)
                 return;
-            if (Application.OpenForms.OfType<frmAssetBrowser>().Any())
+            if (Application.OpenForms.OfType<frmWPFAssetBrowser>().Any())
             {
-                var frm = Application.OpenForms.OfType<frmAssetBrowser>().First();
+                var frm = Application.OpenForms.OfType<frmWPFAssetBrowser>().First();
                 if (!string.IsNullOrEmpty(browseToPath))
-                    frm.OpenPath(browseToPath);
+                    //frm.OpenPath(browseToPath);
                 frm.WindowState = FormWindowState.Minimized;
                 frm.Show();
                 frm.WindowState = FormWindowState.Normal;
                 return;
             }
+
+            if (AssetBrowserVM == null)
+            {
+                AssetBrowserVM = await AssetBrowserViewModel.CreateAsync();
+            }
+                //AssetBrowserVM = new AssetBrowserViewModel();
+
+            var assetBrowser = new frmWPFAssetBrowser(AssetBrowserVM);
             
 
-            
-            var explorer = new frmWPFAssetBrowser();
-            //var explorer = new frmAssetBrowser(loadmods ?  MainController.Get().GetModArchives() : MainController.Get().GetArchives());
-
-            //explorer.RequestFileAdd += Assetbrowser_FileAdd;
+            //assetBrowser.RequestFileAdd += Assetbrowser_FileAdd;
             //explorer.OpenPath(browseToPath);
             Rectangle floatWindowBounds = new Rectangle() { Width = 827, Height = 564 };
-            explorer.Show(dockPanel, floatWindowBounds);
+            assetBrowser.Show(dockPanel, floatWindowBounds);
         }
 
         /// <summary>

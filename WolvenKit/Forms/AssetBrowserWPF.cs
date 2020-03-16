@@ -14,19 +14,23 @@ using System.Windows.Input;
 
 namespace WolvenKit.Forms
 {
+    using WolvenKit.App.ViewModels;
     using WolvenKit.Common;
-    using WpfControlLibrary;
+    using WpfControlLibrary.AssetBrowser;
 
 
     public partial class frmWPFAssetBrowser : DockContent
     {
         private ElementHost ctrlHost;
         private AssetBrowserControl wpfcontrol;
+        private IViewModel viewModel;
 
-        public frmWPFAssetBrowser()
+        public frmWPFAssetBrowser(IViewModel vm)
         {
-            InitializeComponent();
+            viewModel = vm;
 
+            InitializeComponent();
+            
         }
 
         private void AssetBrowserWPF_Load(object sender, EventArgs e)
@@ -37,7 +41,7 @@ namespace WolvenKit.Forms
                 Dock = DockStyle.Fill
             };
             this.Controls.Add(ctrlHost);
-            wpfcontrol = new AssetBrowserControl();
+            wpfcontrol = new AssetBrowserControl(viewModel);
             wpfcontrol.InitializeComponent();
             ctrlHost.Child = wpfcontrol;
             wpfcontrol.Loaded += new RoutedEventHandler(wpfCtrl_Loaded);

@@ -15,6 +15,10 @@ namespace WolvenKit.Cache
     /// </summary>
     public class CollisionCacheItem : IWitcherFile
     {
+        public string DisplayType => Bundle.TypeName;
+        public string DisplayName => Name;
+
+
         public IWitcherArchiveType Bundle { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }

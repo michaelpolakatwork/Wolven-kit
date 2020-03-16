@@ -10,6 +10,9 @@ namespace WolvenKit.Bundles
 {
     public class BundleItem : IWitcherFile
     {
+        public string DisplayType => Bundle.TypeName;
+        public string DisplayName => Path.GetFileName(Name);
+
         public IWitcherArchiveType Bundle { get; set; }
         public string Name { get; set; }
         public byte[] Hash { get; set; }
@@ -46,6 +49,8 @@ namespace WolvenKit.Bundles
                 }
             }
         }
+
+        
 
         public void Extract(Stream output)
         {

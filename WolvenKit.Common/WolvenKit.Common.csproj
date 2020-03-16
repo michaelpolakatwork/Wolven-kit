@@ -229,9 +229,15 @@
   <ItemGroup>
     <Compile Include="Commonfunctions.cs" />
     <Compile Include="Model\AlphanumComparator.cs" />
+    <Compile Include="Model\IFolderExplorerItem.cs" />
+    <Compile Include="Model\IFileExplorerItem.cs" />
     <Compile Include="Model\IWitcherArchive.cs" />
     <Compile Include="Model\IWitcherArchiveType.cs" />
     <Compile Include="Model\IWitcherFile.cs" />
+    <Compile Include="Model\FolderBrowserNode.cs" />
+    <Compile Include="Model\QuickAccessNode.cs" />
+    <Compile Include="Model\WitcherListViewItem.cs" />
+    <Compile Include="Model\WitcherTreeNode.cs" />
     <Compile Include="ObjectDumper.cs" />
     <Compile Include="Model\WKPackage.cs" />
     <Compile Include="ObservableObject.cs" />
@@ -245,7 +251,6 @@
     <Compile Include="Model\Wcc\wcc_command.cs" />
     <Compile Include="Model\Wcc\wcc_commands.cs" />
     <Compile Include="Model\Wcc\wcc_task.cs" />
-    <Compile Include="Model\WitcherTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

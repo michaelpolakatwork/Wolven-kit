@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="WolvenKit.WpfControlLibrary.Templates.FileBrowserItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WolvenKit.WpfControlLibrary.Templates"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="200">
+
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            
+            <BitmapImage x:Key="IconFile" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/DeploymentFile_16x.png" />
+            <BitmapImage x:Key="IconFolderClosed" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/FolderClosed_16x.png" />
+        
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Image  Margin="2" Grid.Column="0">
+            <Image.Style>
+                <Style TargetType="Image">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DisplayType}" Value="WitcherTreeNode">
+                            <Setter Property="Source" Value="{DynamicResource IconFolderClosed}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayType}" Value="Bundle">
+                            <Setter Property="Source" Value="{DynamicResource IconFile}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayType}" Value="CollisionCache">
+                            <Setter Property="Source" Value="{DynamicResource IconFile}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayType}" Value="TextureCache">
+                            <Setter Property="Source" Value="{DynamicResource IconFile}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayType}" Value="SoundCache">
+                            <Setter Property="Source" Value="{DynamicResource IconFile}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Image.Style>
+        </Image>
+        <TextBlock Text="{Binding DisplayName}" ToolTip="{Binding Path=FullPath}" Padding="2,4,2,2" Grid.Column="1" Width="Auto"/>
+    </Grid>
+</UserControl>

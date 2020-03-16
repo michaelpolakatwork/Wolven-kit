@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WolvenKit.Common
 {
-    public interface IWitcherFile
+    public interface IWitcherFile : IFileExplorerItem
     {
         IWitcherArchiveType Bundle { get; set; }
         string Name { get; set; }
@@ -18,5 +18,7 @@ namespace WolvenKit.Common
 
         void Extract(Stream output);
         void Extract(string filename);
+
+        
     }
 }

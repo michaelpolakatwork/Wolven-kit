@@ -42,6 +42,8 @@ namespace WolvenKit.App
         public string GameRootDir => Path.Combine(ExecutablePath, @"..\..\..\");
 
 
+        public List<string> AssetBrowserFavourites { get; set; } = new List<string>();
+
         ~Configuration()
         {
             Save();

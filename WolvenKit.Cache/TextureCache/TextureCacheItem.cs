@@ -16,6 +16,9 @@ namespace WolvenKit.Cache
 
     public class TextureCacheItem : IWitcherFile
     {
+        public string DisplayType => Bundle.TypeName;
+        public string DisplayName => Name;
+
         public IWitcherArchiveType Bundle { get; set; }
         public string DateString { get; set; }
 

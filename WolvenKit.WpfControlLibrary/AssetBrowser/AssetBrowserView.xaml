@@ -1,31 +1,69 @@
-﻿<UserControl x:Class="WolvenKit.WpfControlLibrary.AssetBrowserControl"
+﻿<UserControl x:Class="WolvenKit.WpfControlLibrary.AssetBrowser.AssetBrowserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:app="clr-namespace:WolvenKit.App;assembly=WolvenKit.App"
              xmlns:vm="clr-namespace:WolvenKit.App.ViewModels;assembly=WolvenKit.App"
+             xmlns:templates="clr-namespace:WolvenKit.WpfControlLibrary.Templates"
              xmlns:Fluent="urn:fluent-ribbon"
+             xmlns:common="clr-namespace:WolvenKit.Common;assembly=WolvenKit.Interfaces"
+             xmlns:bundle="clr-namespace:WolvenKit.Bundles;assembly=WolvenKit.Bundles"
+             xmlns:cache="clr-namespace:WolvenKit.Cache;assembly=WolvenKit.Cache"
+             xmlns:sound="clr-namespace:WolvenKit.Wwise;assembly=WolvenKit.Wwise"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <vm:AssetBrowserViewModel/>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
 
     <UserControl.Resources>
-        
         <ResourceDictionary>
+
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Fluent;Component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <BitmapImage x:Key="ResIconPin" 
-                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/PushpinOutlineAngle_16x.png" />
-            <BitmapImage x:Key="ResIconMoveTo" 
-                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/MoveToSubmodule_16x.png" />
-            <BitmapImage x:Key="ResIconPreview" 
-                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/PlaybackPreview_16x.png" />
+            <svgc:SvgViewbox x:Key="IconMoveTo" Source="/Resources/Icons/MoveToSubmodule_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconMoveToDLC" Source="/Resources/Icons/MoveToSubmodule2_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconPin" Source="/Resources/Icons/PushpinOutlineAngle_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconPreview" Source="/Resources/Icons/PlaybackPreview_16x.svg"/>
+            
+            <svgc:SvgViewbox x:Key="IconSelectAll" Source="/Resources/Icons/SelectAllItems_inversed_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconSelectInverse" Source="/Resources/Icons/SelectInverseItems_inversed_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconSelectNone" Source="/Resources/Icons/SelectNoItems_inversed_16x.svg"/>
+                             
+            <svgc:SvgViewbox x:Key="IconModBrowser" Source="/Resources/Icons/Method_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconGameBrowser" Source="/Resources/Icons/SelectObject_16x.svg"/>
+
+            <svgc:SvgViewbox x:Key="IconSearchType" Source="/Resources/Icons/TypeDefinition_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconSearchSize" Source="/Resources/Icons/ZoomOriginalSize_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconBundle" Source="/Resources/Icons/PackageProperty_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconCloseSearch" Source="/Resources/Icons/Close_red_16x.svg"/>
+            <svgc:SvgViewbox x:Key="IconOpenLocation" Source="/Resources/Icons/UploadFile_16x.svg"/>
+
+            <BitmapImage x:Key="IconUp" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/ASX_Upload_grey_16x.png" />
+            <BitmapImage x:Key="IconBackwards" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/Backwards_16x.png" />
+            <BitmapImage x:Key="IconForwards" 
+                         UriSource="/WolvenKit.WpfControlLibrary;component/Resources/Icons/Forwards_16x.png" />
+
+
+            <Style x:Key="TransparentStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent">
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -34,64 +72,305 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
 
-
-        <Fluent:Ribbon Grid.Row="0">
+        <!-- Ribbon -->
+        <Fluent:Ribbon Grid.Row="0" 
+                       SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       
+                       >
 
             <Fluent:Ribbon.Menu>
                 <Fluent:Backstage>
                 </Fluent:Backstage>
             </Fluent:Ribbon.Menu>
 
+            <!--Contextual Tab Groups-->
+            <Fluent:Ribbon.ContextualGroups>
+                <Fluent:RibbonContextualTabGroup x:Name="searchTabGroup"
+                                     Header="Search Tools" 
+                                     Visibility="Visible"
+                                     Background="Green"
+                                     BorderBrush="Orange"
+                                     Foreground="DarkGreen"
+                                                 />
+            </Fluent:Ribbon.ContextualGroups>
+            
 
-            <Fluent:RibbonTabItem Header="Home" >
-                <Fluent:RibbonGroupBox Header="Mod action">
-                    <Fluent:Button Header="Add to Mod" 
-                           Icon="{DynamicResource ResIconMoveTo}"
-                           LargeIcon="{DynamicResource ResIconMoveTo}" 
-                           Command="{Binding AddToModCommand}"/>
-                    <Fluent:Button Header="Add to DLC" 
-                           Icon="{DynamicResource ResIconMoveTo}"
-                           LargeIcon="{DynamicResource ResIconMoveTo}" 
-                           Command="{Binding AddToDlcCommand}"/>
+            <!--Search Tab-->
+            <Fluent:RibbonTabItem Header="Search" Group="{Binding Source={x:Reference searchTabGroup}}" 
+                                  Visibility="{Binding IsContextualRibbonSearchVisible}"
+                                  TabIndex="{Binding SearchTabIndex}"
+                                  Foreground="Black">
+                <Fluent:RibbonGroupBox Header="Refine" >
+                    <Fluent:ComboBox Header="Bundle"  x:Name="SearchBundleButton"
+                           ItemsSource="{Binding SearchBundles}"
+                           Icon="{DynamicResource IconBundle}"
+                           Text="{Binding SearchParams.SearchBundleText}"
+                           
+                           Size="Middle">
+                    </Fluent:ComboBox>
+                    <Fluent:ComboBox Header="Type" x:Name="SearchTypeButton"
+                           ItemsSource="{Binding SearchTypes}"
+                           Icon="{DynamicResource IconSearchType}"
+                           Text="{Binding SearchParams.SearchTypeText}"
+                           Size="Middle">
+                    </Fluent:ComboBox>
+                    <Fluent:DropDownButton x:Name="SearchSizeButton" Header="Size" 
+                           ItemsSource="{Binding SearchSizes}"
+                           Icon="{DynamicResource IconSearchSize}"
+                           LargeIcon="{DynamicResource IconSearchSize}" 
+                           Size="Middle">
+                    </Fluent:DropDownButton>
                 </Fluent:RibbonGroupBox>
-                
-                <Fluent:RibbonGroupBox Header="">
-                    <Fluent:Button Header="Pin to Quick access"
-                           Icon="{DynamicResource ResIconPin}"
-                           LargeIcon="{DynamicResource ResIconPin}" />
-                </Fluent:RibbonGroupBox>
-                
-                <Fluent:RibbonGroupBox Header="View">
-                    <Fluent:Button Header="Preview asset"
-                           Icon="{DynamicResource ResIconPreview}"
-                           LargeIcon="{DynamicResource ResIconPreview}" />
+
+                <Fluent:RibbonGroupBox Header="Options">
+                    <Fluent:Button Header="Open file location"
+                           LargeIcon="{DynamicResource IconOpenLocation}" 
+                           Command="{Binding SearchOpenFileLocationCommand}"/>
+                    <Fluent:Button Header="Close search" 
+                           LargeIcon="{DynamicResource IconCloseSearch}" 
+                           Command="{Binding SearchCloseCommand}"/>
                 </Fluent:RibbonGroupBox>
 
             </Fluent:RibbonTabItem>
+
+            
+
+            <!-- Home Tab -->
+            <Fluent:RibbonTabItem Header="Home" >
+                <Fluent:RibbonGroupBox Header="Open">
+
+                    <Fluent:Button  
+                           Icon="{DynamicResource IconModBrowser}"
+                           Command="{Binding ToggleBrowserCommand}">
+                        <Fluent:Button.Style>
+                            <Style TargetType="Fluent:Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModBrowser}" Value="True">
+                                        <Setter Property="LargeIcon" Value="{DynamicResource IconGameBrowser}"/>
+                                        <Setter Property="Header" Value="Open Game Browser"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsModBrowser}" Value="False">
+                                        <Setter Property="LargeIcon" Value="{DynamicResource IconModBrowser}"/>
+                                        <Setter Property="Header" Value="Open Mod Browser"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Fluent:Button.Style>
+
+
+                    </Fluent:Button>
+                    <Fluent:Button Header="Add to Mod"
+                           Icon="{DynamicResource IconMoveTo}"
+                           LargeIcon="{DynamicResource IconMoveTo}" 
+                           Command="{Binding AddToModCommand}"
+                           CommandParameter="{Binding ElementName=FileListView, Path=SelectedItems}"/>
+                    <Fluent:Button Header="Add to DLC" 
+                           Icon="{DynamicResource IconMoveToDLC}"
+                           LargeIcon="{DynamicResource IconMoveToDLC}" 
+                           Command="{Binding AddToDlcCommand}"
+                           CommandParameter="{Binding ElementName=FileListView, Path=SelectedItems}"/>
+                </Fluent:RibbonGroupBox>
+
+                <Fluent:RibbonGroupBox Header="">
+                    <Fluent:Button Header="Pin to Quick access"
+                           Icon="{DynamicResource IconPin}"
+                           LargeIcon="{DynamicResource IconPin}" 
+                           Command="{Binding PinCommand}"/>
+                </Fluent:RibbonGroupBox>
+
+                <Fluent:RibbonGroupBox Header="View">
+                    <Fluent:Button Header="Preview asset"
+                           Icon="{DynamicResource IconPreview}"
+                           LargeIcon="{DynamicResource IconPreview}"
+                           Command="{Binding PreviewCommand}"/>
+                </Fluent:RibbonGroupBox>
+
+                <Fluent:RibbonGroupBox Header="Select">
+                    <Fluent:Button Header="Select all" 
+                           Icon="{DynamicResource IconSelectAll}"
+                           LargeIcon="{DynamicResource IconSelectAll}" 
+                           Command="{Binding SelectAllCommand}"
+                           Size="Middle"/>
+                    <Fluent:Button Header="Select none" 
+                           Icon="{DynamicResource IconSelectNone}"
+                           LargeIcon="{DynamicResource IconSelectNone}" 
+                           Command="{Binding SelectNoneCommand}"
+                           Size="Middle"/>
+                    <Fluent:Button Header="Invert Selection" 
+                           Icon="{DynamicResource IconSelectInverse}"
+                           LargeIcon="{DynamicResource IconSelectInverse}" 
+                           Command="{Binding InvertSelectionCommand}"
+                           Size="Middle"/>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+
+            <!-- View Tab -->
+            <Fluent:RibbonTabItem Header="View">
+                <Fluent:RibbonGroupBox Header="Panes">
+
+                </Fluent:RibbonGroupBox>
+
+
+
+            </Fluent:RibbonTabItem>
+
         </Fluent:Ribbon>
 
+        <!-- Breadcrumb -->
         <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation Buttons -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button Command="{Binding BackwardsCommand}" Background="Transparent">
+                    <Image Source="{DynamicResource IconBackwards}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Button>
+                <Button Command="{Binding ForwardsCommand}" Background="Transparent">
+                    <Image Source="{DynamicResource IconForwards}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Button>
+                <Button Command="{Binding UpCommand}" Background="Transparent">
+                    <Image Source="{DynamicResource IconUp}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Button>
+
+                
+                
+            </StackPanel>
+
+            <!-- Breadcrumb -->
+            <TextBox Grid.Column="1"  Background="Transparent" Text="{Binding Breadcrumb, Mode=OneWay}">
+
+            </TextBox>
+
+            <!-- SearchBox -->
+            <templates:SearchBox Grid.Column="2" DataContext="{Binding}">
+
+            </templates:SearchBox>
+
+        </Grid>
+
+        <!-- Main Panel -->
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="2" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="220*" />
+                <ColumnDefinition Width="79*"/>
             </Grid.ColumnDefinitions>
-            
-            <TreeView Grid.Column="0"
-                Name="FolderTreeView"
-                ItemsSource="{Binding TreeViewSource}"
-                      />
 
+            <!-- Folder Browser -->
+            <TreeView Grid.Column="0"
+                x:Name="FolderTreeView"
+                ItemsSource="{Binding TreeNodes}"
+                      >
+                <!-- Data Template for WitcherTreeNode items-->
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type  common:FolderBrowserNode}" 
+                                              ItemsSource="{Binding DisplayChildren}"
+                                              >
+                        <templates:FolderBrowserItem/>
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type common:QuickAccessNodeItem}">
+                        <templates:FolderBrowserItem/>
+                    </DataTemplate>
+                </TreeView.Resources>
+
+                <!-- Bind IsSelected and IsExpanded to Item ViewModel -->
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <!-- Raise SelectedItemChangedCommand in the Control ViewModel -->
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}"  CommandParameter="{Binding SelectedItem, ElementName=FolderTreeView, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TreeView>
+
+
+            <!-- GridSplitter -->
             <GridSplitter Grid.Column="1" Width="2" HorizontalAlignment="Stretch" />
-            
+
+
+            <!-- File Browser -->
             <ListView Grid.Column="2"
-                Name="FileListView"/>
+                Name="FileListView" Grid.ColumnSpan="2"
+                      ItemsSource="{Binding SelectedNode.Browseables}"
+                      SelectedItem="{Binding SelectedItem}"
+                      SelectionMode="Extended"
+                      
+                      >
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" Width="300" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <templates:FileBrowserItem Width="Auto"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Type" Width="Auto" DisplayMemberBinding="{Binding TypeName}">
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+
+                <!-- Raise SelectedItemChangedCommand in the Control ViewModel -->
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding OpenNodeCommand}"  CommandParameter="{Binding SelectedItem, ElementName=FileListView, Mode=OneWay}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewKeyDown">
+                        <i:InvokeCommandAction Command="{Binding PreviewCommand}"  CommandParameter="{Binding SelectedItem, ElementName=FileListView, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </ListView>
+
 
         </Grid>
-        
+
     </Grid>
 </UserControl>
