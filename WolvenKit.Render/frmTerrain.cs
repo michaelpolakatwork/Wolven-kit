@@ -8,12 +8,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using WolvenKit.CR2W;
+using WolvenKit.CR2W.Types;
+using WolvenKit.Render.Terrain;
 
 namespace WolvenKit.Render
 {
@@ -45,10 +49,17 @@ namespace WolvenKit.Render
 
         bool catchmouse = false;
 
-        public frmTerrain()
+        public CR2WFile terraintile { get; set; }
+
+        public frmTerrain(string path = "")
         {
             InitializeComponent();
-            //Cursor.Hide();
+            if(!string.IsNullOrEmpty(path))
+            {
+                terraintile = new CR2WFile(new System.IO.BinaryReader(new FileStream(path, FileMode.Open))) { 
+                    FileName = path
+                };
+            }
         }
 
         /// <summary>
@@ -125,16 +136,8 @@ namespace WolvenKit.Render
                 arrow.Scale = new Vector3Df(100.0f);
                 arrow.Rotation = new Vector3Df(0.0f, 0.0f, 180.0f);
 
-                //Skybox and skydome
+                //Skydome
                 driver.SetTextureCreationFlag(TextureCreationFlag.CreateMipMaps, false);
-                /*var box = smgr.AddSkyBoxSceneNode(
-                    ("Terrain\\irrlicht2_up.jpg"),
-                    ("Terrain\\irrlicht2_dn.jpg"),
-                    ("Terrain\\irrlicht2_lf.jpg"),
-                    ("Terrain\\irrlicht2_rt.jpg"),
-                    ("Terrain\\irrlicht2_ft.jpg"),
-                    ("Terrain\\irrlicht2_bk.jpg"));
-                box.Visible = true;*/
                
                 var dome = smgr.AddSkyDomeSceneNode(driver.GetTexture("Terrain\\skydome.jpg"), 16, 8, 0.95f, 2.0f);
                 dome.Visible = true;
@@ -220,7 +223,42 @@ namespace WolvenKit.Render
 
         private void frmTerrain_Load(object sender, EventArgs e)
         {
-            StartIrrThread();
+            //Process the file
+            if (terraintile != null)
+            {
+                //Find the buffers and buffergroups
+                if (terraintile.chunks[0].Type == "CTerrainTile")
+                {
+                    var groups = (CArray)terraintile.chunks[0].GetVariableByName("Groups");
+
+                    List<TileGroup> tgs = new List<TileGroup>();
+
+                    foreach (CArray resolutiongroup in groups.array)
+                    {
+                        CInt16 lod1 = (CInt16)resolutiongroup.array[0];
+                        CInt16 lod2 = (CInt16)resolutiongroup.array[1];
+                        CInt16 lod3 = (CInt16)resolutiongroup.array[2];
+
+                        CInt32 resolution = (CInt32)resolutiongroup.array[3];
+
+                        tgs.Add(new TileGroup()
+                        {
+                            lod1 = terraintile.FileName + "." + lod1.val.ToString() + ".buffer",
+                            lod2 = terraintile.FileName + "." + lod2.val.ToString() + ".buffer",
+                            lod3 = terraintile.FileName + "." + lod3.val.ToString() + ".buffer",
+                            resolution = resolution.val
+                        });
+                    }
+                    Console.WriteLine("Loaded " + terraintile.FileName + ":");
+                    tgs.ForEach(x => Console.WriteLine(x.ToString()));
+
+                    //Start the rendering
+                    StartIrrThread();
+                    return;
+                }
+            }
+            MessageBox.Show("No terrain tile supplied!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
 
         private void irrlichtPanel_MouseMove(object sender, MouseEventArgs e)
@@ -297,7 +335,8 @@ namespace WolvenKit.Render
             {
                 catchmouse = true;
                 Cursor.Hide();
-                middletext.Remove();
+                if(middletext != null)
+                    middletext.Remove();
                 device.CursorControl.Visible = false;
             }
         }

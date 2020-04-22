@@ -141,6 +141,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="RenderHelper.cs" />
+    <Compile Include="Terrain\TileGroup.cs" />
     <Compile Include="WKMesh.cs" />
     <Compile Include="frmTerrain.cs">
       <SubType>Form</SubType>

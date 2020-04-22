@@ -20,20 +20,12 @@ namespace WolvenKit.Render
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]        static void Main(string[] args)
+        [STAThread]        
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //using (var fo = new OpenFileDialog())
-            //{
-            //    fo.Filter = "DDS Image | *.dds";
-            //    if (fo.ShowDialog() == DialogResult.OK)
-            //    {
-            //        WolvenKit.Cache.DdsImage img = new Cache.DdsImage(File.ReadAllBytes(fo.FileName));
-            //        var i = 0;
-            //    }
-            //}
-            Application.Run(new frmTerrain());
+            Application.Run(new frmTerrain(args[0] ?? ""));
             
         }
     }

@@ -1248,6 +1248,17 @@ namespace WolvenKit
                         }
                         break;
                     }
+                case ".w2ter":
+                    {
+#if DEBUG
+                        var render = new Render.frmTerrain()
+                        {
+                            terraintile = doc.File
+                        };
+                        render.Show(doc.FormPanel, DockState.Document);
+#endif
+                        break;
+                    }
                 default:
                     {
                         break;
