@@ -26,6 +26,7 @@ using WolvenKit.Extensions;
 using WolvenKit.Common.Wcc;
 using WolvenKit.Common.Services;
 using System.ComponentModel;
+using WolvenKit.Wwise.Wwise;
 
 namespace WolvenKit
 {
@@ -40,6 +41,7 @@ namespace WolvenKit
     using Common.Wcc;
     using Common.Services;
     using Enums = Dfust.Hotkeys.Enums;
+    using WolvenKit.Render;
 
     public partial class frmMain : Form
     {
@@ -652,6 +654,14 @@ namespace WolvenKit
                 case ".usm":
                     LoadUsmFile(fullpath);
                     break;
+                case ".bnk":
+                    {
+                        using (var sp = new frmAudioPlayer(fullpath))
+                        {
+                            sp.ShowDialog();
+                        }
+                        break;
+                    }
                 case ".ws":
                     {
                         var se = new frmScriptEditor(fullpath);
@@ -1021,6 +1031,7 @@ namespace WolvenKit
                 if (MainController.Get().SoundManager != null) managers.Add(MainController.Get().SoundManager);
                 if (MainController.Get().TextureManager != null) managers.Add(MainController.Get().TextureManager);
                 if (MainController.Get().CollisionManager != null) managers.Add(MainController.Get().CollisionManager);
+                if (MainController.Get().SpeechManager != null) managers.Add(MainController.Get().SpeechManager);
             }
             
             //if (MainController.Get().ModCollisionManager != null) managers.Add(MainController.Get().ModCollisionManager);
@@ -1609,7 +1620,7 @@ _col - for simple stuff like boxes and spheres","Information about importing mod
         private void donateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Thank you! Every last bit helps and everything donated is distributed between the core developers evenly.","Thank you",MessageBoxButtons.OK,MessageBoxIcon.Information);
-            System.Diagnostics.Process.Start("https://www.paypal.me/traderain");
+            System.Diagnostics.Process.Start("https://www.patreon.com/bePatron?u=5458437");
         }
 
         private void Assetbrowser_FileAdd(object sender, Tuple<List<IWitcherArchive>, List<WitcherListViewItem>,bool> Details)
@@ -2299,6 +2310,75 @@ Would you like to open the problem steps recorder?", "Bug reporting", MessageBox
             ter.Show(this.dockPanel, DockState.Document);
         }
 
+        private void w2rigjsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //MessageBox.Show(@"Select w2rig JSON.", "Information about importing rigs", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (var of = new OpenFileDialog())
+            {
+                of.Title = "Please select your w2rig.json file";
+                of.Filter = "w2rig JSON files | *w2rig.json";
+                if (of.ShowDialog() == DialogResult.OK)
+                {
+                    using (var sf = new SaveFileDialog())
+                    {
+                        sf.Filter = "Witcher 3 rig file | *.w2rig";
+                        sf.Title = "Please specify a location to save the imported file";
+                        sf.InitialDirectory = MainController.Get().Configuration.InitialFileDirectory;
+                        sf.FileName = of.FileName;
+                        if (sf.ShowDialog() == DialogResult.OK)
+                        {
+                            try
+                            {
+                                ConvertRig rig = new ConvertRig();
+                                rig.Load(of.FileName);
+                                rig.SaveToFile(sf.FileName);
+                            }
+                            catch (Exception ex)
+                            {
+                                AddOutput(ex.ToString() + "\n", Logtype.Error);
+                            }
+
+                            MainController.Get().ProjectStatus = "File imported succesfully!";
+                        }
+                    }
+                }
+            }
+        }
+
+        private void w2animsjsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //MessageBox.Show(@"Select w2anims JSON.", "Information about importing rigs", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (var of = new OpenFileDialog())
+            {
+                of.Title = "Please select your w2anims.json file";
+                of.Filter = "anims JSON files | *w2anims.json";
+                if (of.ShowDialog() == DialogResult.OK)
+                {
+                    using (var sf = new SaveFileDialog())
+                    {
+                        sf.Filter = "Witcher 3 w2anims file | *.w2anims";
+                        sf.Title = "Please specify a location to save the imported file";
+                        sf.InitialDirectory = MainController.Get().Configuration.InitialFileDirectory;
+                        sf.FileName = of.FileName;
+                        if (sf.ShowDialog() == DialogResult.OK)
+                        {
+                            try
+                            {
+                                ConvertAnimation anim = new ConvertAnimation();
+                                anim.Load(new List<string>(){of.FileName}, sf.FileName);
+                            }
+                            catch (Exception ex)
+                            {
+                                AddOutput(ex.ToString() + "\n", Logtype.Error);
+                            }
+
+                            MainController.Get().ProjectStatus = "File imported succesfully!";
+                        }
+                    }
+                }
+            }
+        }
+
         private void menuStrip1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -2469,18 +2549,51 @@ Would you like to open the problem steps recorder?", "Bug reporting", MessageBox
                 //Handle sound caching
                 if (packsettings.Sound)
                 {
-                    if (new DirectoryInfo(Path.Combine(ActiveMod.ModDirectory, MainController.Get().SoundManager.TypeName)).GetFiles("*.*",SearchOption.AllDirectories).Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).Any())
+
+                    var soundmoddir = Path.Combine(ActiveMod.ModDirectory, MainController.Get().SoundManager.TypeName);
+
+                    foreach (var bnk in Directory.GetFiles(soundmoddir, "*.bnk", SearchOption.AllDirectories))
                     {
-                        SoundCache.Write(new DirectoryInfo(Path.Combine(ActiveMod.ModDirectory, MainController.Get().SoundManager.TypeName)).GetFiles("*.*", SearchOption.AllDirectories).Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).ToList().Select(x => x.FullName).ToList(), Path.Combine(modpackDir, @"soundspc.cache"));
+                        Soundbank bank = new Soundbank(bnk);
+                        bank.readFile();
+                        bank.read_wems(soundmoddir);
+                        bank.rebuild_data();
+                        File.Delete(bnk);
+                        bank.build_bnk(bnk);
+                        Logger.LogString("Rebuilt modded bnk " + bnk, Logtype.Success);
+                    }
+
+                    //Create mod soundspc.cache
+                    if(Directory.Exists(soundmoddir) && 
+                        new DirectoryInfo(soundmoddir)
+                        .GetFiles("*.*", SearchOption.AllDirectories)
+                        .Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).Any())
+                    {
+                        SoundCache.Write(
+                            new DirectoryInfo(soundmoddir)
+                                .GetFiles("*.*", SearchOption.AllDirectories)
+                                .Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk"))
+                                .ToList().Select(x => x.FullName).ToList(),
+                                Path.Combine(modpackDir, @"soundspc.cache"));
                         AddOutput("Mod soundcache generated!\n", Logtype.Important);
                     }
                     else
                     {
                         AddOutput("Mod soundcache wasn't generated!\n", Logtype.Important);
                     }
-                    if (new DirectoryInfo(Path.Combine(ActiveMod.DlcDirectory, MainController.Get().SoundManager.TypeName)).GetFiles("*.*", SearchOption.AllDirectories).Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).Any())
+
+                    var sounddlcdir = Path.Combine(ActiveMod.DlcDirectory, MainController.Get().SoundManager.TypeName);
+
+                    //Create dlc soundspc.cache
+                    if (Directory.Exists(sounddlcdir) && new DirectoryInfo(sounddlcdir)
+                        .GetFiles("*.*", SearchOption.AllDirectories)
+                        .Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).Any())
                     {
-                        SoundCache.Write(new DirectoryInfo(Path.Combine(ActiveMod.DlcDirectory, MainController.Get().SoundManager.TypeName)).GetFiles("*.*", SearchOption.AllDirectories).Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).ToList().Select(x => x.FullName).ToList(), Path.Combine(DlcpackDir, @"soundspc.cache"));
+                        SoundCache.Write(
+                            new DirectoryInfo(sounddlcdir)
+                                .GetFiles("*.*", SearchOption.AllDirectories)
+                                .Where(file => file.Name.ToLower().EndsWith("wem") || file.Name.ToLower().EndsWith("bnk")).ToList().Select(x => x.FullName).ToList(),
+                            Path.Combine(DlcpackDir, @"soundspc.cache"));
                         AddOutput("DLC soundcache generated!\n", Logtype.Important);
                     }
                     else
