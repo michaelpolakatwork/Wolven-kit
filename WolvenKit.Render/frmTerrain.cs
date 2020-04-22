@@ -18,6 +18,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 using WolvenKit.Render.Terrain;
+using static WolvenKit.CR2W.Types.Enums;
 
 namespace WolvenKit.Render
 {
@@ -49,7 +50,14 @@ namespace WolvenKit.Render
 
         bool catchmouse = false;
 
+        //Terrain specific
         public CR2WFile terraintile { get; set; }
+
+        List<TileGroup> tgs;
+
+        int minHeightValue = 0;
+        int maxHeightValue = 0;
+        ETerrainTileCollision collisionType = 0;
 
         public frmTerrain(string path = "")
         {
@@ -231,7 +239,7 @@ namespace WolvenKit.Render
                 {
                     var groups = (CArray)terraintile.chunks[0].GetVariableByName("Groups");
 
-                    List<TileGroup> tgs = new List<TileGroup>();
+                    tgs = new List<TileGroup>();
 
                     foreach (CArray resolutiongroup in groups.array)
                     {
@@ -249,6 +257,9 @@ namespace WolvenKit.Render
                             resolution = resolution.val
                         });
                     }
+                    collisionType = (ETerrainTileCollision)Enum.Parse(typeof(ETerrainTileCollision), ((CName)terraintile.chunks[0].GetVariableByName("collisionType")).Value);
+                    minHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("minHeightValue")).val;
+                    maxHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("maxHeightValue")).val;
                     Console.WriteLine("Loaded " + terraintile.FileName + ":");
                     tgs.ForEach(x => Console.WriteLine(x.ToString()));
 
