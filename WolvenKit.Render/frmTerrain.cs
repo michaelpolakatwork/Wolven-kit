@@ -8,8 +8,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -261,7 +263,44 @@ namespace WolvenKit.Render
                     minHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("minHeightValue")).val;
                     maxHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("maxHeightValue")).val;
                     Console.WriteLine("Loaded " + terraintile.FileName + ":");
-                    tgs.ForEach(x => Console.WriteLine(x.ToString()));
+                    tgs.ForEach(x => {
+                        try
+                        {
+                            var f = x.lod1 + "_" + PixelFormat.Format16bppRgb565 + ".png";
+                            Console.WriteLine(x.ToString());
+                            if (File.Exists(f))
+                                File.Delete(f);
+                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod1), PixelFormat.Format16bppRgb565);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
+                        }
+                        try
+                        {
+                            var f = x.lod2 + "_" + PixelFormat.Format16bppRgb565 + ".png";
+                            Console.WriteLine(x.ToString());
+                            if (File.Exists(f))
+                                File.Delete(f);
+                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod2), PixelFormat.Format16bppRgb565);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
+                        }
+                        try
+                        {
+                            var f = x.lod3 + "_" + PixelFormat.Format16bppRgb565 + ".png";
+                            Console.WriteLine(x.ToString());
+                            if (File.Exists(f))
+                                File.Delete(f);
+                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod3), PixelFormat.Format16bppRgb565);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
+                        }
+                    });
 
                     //Start the rendering
                     StartIrrThread();
@@ -270,6 +309,49 @@ namespace WolvenKit.Render
             }
             MessageBox.Show("No terrain tile supplied!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
+        }
+
+        int WriteBitmapFile(string filename, int width, int height, byte[] imageData, PixelFormat format)
+        {
+            byte[] newData = new byte[imageData.Length];
+
+            for (int x = 0; x < imageData.Length; x += 4)
+            {
+                byte[] pixel = new byte[4];
+                Array.Copy(imageData, x, pixel, 0, 4);
+
+                byte r = pixel[0];
+                byte g = pixel[1];
+                byte b = pixel[2];
+                byte a = pixel[3];
+
+                byte[] newPixel = new byte[] { b, g, r, a };
+
+                Array.Copy(newPixel, 0, newData, x, 4);
+            }
+
+            imageData = newData;
+
+            using (var stream = new MemoryStream(imageData))
+            using (var bmp = new Bitmap(width,
+                height,
+                format))
+            {
+                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0,
+                                                                bmp.Width,
+                                                                bmp.Height),
+                                                  ImageLockMode.WriteOnly,
+                                                  bmp.PixelFormat);
+
+                IntPtr pNative = bmpData.Scan0;
+                Marshal.Copy(imageData, 0, pNative, imageData.Length);
+
+                bmp.UnlockBits(bmpData);
+
+                bmp.Save(filename);
+            }
+
+            return 1;
         }
 
         private void irrlichtPanel_MouseMove(object sender, MouseEventArgs e)
