@@ -19,7 +19,6 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
-using WolvenKit.Render.Terrain;
 using static WolvenKit.CR2W.Types.Enums;
 
 namespace WolvenKit.Render
@@ -54,8 +53,6 @@ namespace WolvenKit.Render
 
         //Terrain specific
         public CR2WFile terraintile { get; set; }
-
-        List<TileGroup> tgs;
 
         int minHeightValue = 0;
         int maxHeightValue = 0;
@@ -234,124 +231,8 @@ namespace WolvenKit.Render
         private void frmTerrain_Load(object sender, EventArgs e)
         {
             //Process the file
-            if (terraintile != null)
-            {
-                //Find the buffers and buffergroups
-                if (terraintile.chunks[0].Type == "CTerrainTile")
-                {
-                    var groups = (CArray)terraintile.chunks[0].GetVariableByName("Groups");
-
-                    tgs = new List<TileGroup>();
-
-                    foreach (CArray resolutiongroup in groups.array)
-                    {
-                        CInt16 lod1 = (CInt16)resolutiongroup.array[0];
-                        CInt16 lod2 = (CInt16)resolutiongroup.array[1];
-                        CInt16 lod3 = (CInt16)resolutiongroup.array[2];
-
-                        CInt32 resolution = (CInt32)resolutiongroup.array[3];
-
-                        tgs.Add(new TileGroup()
-                        {
-                            lod1 = terraintile.FileName + "." + lod1.val.ToString() + ".buffer",
-                            lod2 = terraintile.FileName + "." + lod2.val.ToString() + ".buffer",
-                            lod3 = terraintile.FileName + "." + lod3.val.ToString() + ".buffer",
-                            resolution = resolution.val
-                        });
-                    }
-                    collisionType = (ETerrainTileCollision)Enum.Parse(typeof(ETerrainTileCollision), ((CName)terraintile.chunks[0].GetVariableByName("collisionType")).Value);
-                    minHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("minHeightValue")).val;
-                    maxHeightValue = ((CUInt16)terraintile.chunks[0].GetVariableByName("maxHeightValue")).val;
-                    Console.WriteLine("Loaded " + terraintile.FileName + ":");
-                    tgs.ForEach(x => {
-                        try
-                        {
-                            var f = x.lod1 + "_" + PixelFormat.Format16bppRgb565 + ".png";
-                            Console.WriteLine(x.ToString());
-                            if (File.Exists(f))
-                                File.Delete(f);
-                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod1), PixelFormat.Format16bppRgb565);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
-                        }
-                        try
-                        {
-                            var f = x.lod2 + "_" + PixelFormat.Format16bppRgb565 + ".png";
-                            Console.WriteLine(x.ToString());
-                            if (File.Exists(f))
-                                File.Delete(f);
-                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod2), PixelFormat.Format16bppRgb565);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
-                        }
-                        try
-                        {
-                            var f = x.lod3 + "_" + PixelFormat.Format16bppRgb565 + ".png";
-                            Console.WriteLine(x.ToString());
-                            if (File.Exists(f))
-                                File.Delete(f);
-                            WriteBitmapFile(f, x.resolution, x.resolution, File.ReadAllBytes(x.lod3), PixelFormat.Format16bppRgb565);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Failed to write file with format: " + PixelFormat.Format16bppRgb565);
-                        }
-                    });
-
-                    //Start the rendering
-                    StartIrrThread();
-                    return;
-                }
-            }
-            MessageBox.Show("No terrain tile supplied!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            StartIrrThread();
             return;
-        }
-
-        int WriteBitmapFile(string filename, int width, int height, byte[] imageData, PixelFormat format)
-        {
-            byte[] newData = new byte[imageData.Length];
-
-            for (int x = 0; x < imageData.Length; x += 4)
-            {
-                byte[] pixel = new byte[4];
-                Array.Copy(imageData, x, pixel, 0, 4);
-
-                byte r = pixel[0];
-                byte g = pixel[1];
-                byte b = pixel[2];
-                byte a = pixel[3];
-
-                byte[] newPixel = new byte[] { b, g, r, a };
-
-                Array.Copy(newPixel, 0, newData, x, 4);
-            }
-
-            imageData = newData;
-
-            using (var stream = new MemoryStream(imageData))
-            using (var bmp = new Bitmap(width,
-                height,
-                format))
-            {
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0,
-                                                                bmp.Width,
-                                                                bmp.Height),
-                                                  ImageLockMode.WriteOnly,
-                                                  bmp.PixelFormat);
-
-                IntPtr pNative = bmpData.Scan0;
-                Marshal.Copy(imageData, 0, pNative, imageData.Length);
-
-                bmp.UnlockBits(bmpData);
-
-                bmp.Save(filename);
-            }
-
-            return 1;
         }
 
         private void irrlichtPanel_MouseMove(object sender, MouseEventArgs e)
