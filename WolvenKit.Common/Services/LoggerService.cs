@@ -18,7 +18,7 @@ namespace WolvenKit.Common.Services
     }
 
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class LoggerService : ObservableObject, ILoggerService, INotifyPropertyChanged
+    public class LoggerService : ObservableObject, ILoggerService
     {
         public LoggerService()
         {
@@ -29,7 +29,37 @@ namespace WolvenKit.Common.Services
 
         #region Properties
         public ObservableCollection<InterpretedLogMessage> ErrorLog { get; set; }
-        public string Log { get; set; } = "Log initialized.\n\r";
+        #region modname
+        private string _log;
+        public string Log
+        {
+            get => _log;
+            set
+            {
+                if (_log != value)
+                {
+                    _log = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+        #region progress
+        private Tuple<float, string> _progress;
+        public Tuple<float,string> Progress
+        {
+            get => _progress;
+            set
+            {
+                if (_progress != value)
+                {
+                    _progress = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
         public Logtype Logtype { get; set; } = Logtype.Normal;
         #endregion
 
@@ -39,15 +69,40 @@ namespace WolvenKit.Common.Services
 
         #region Methods
         /// <summary>
-        /// Log an string
+        /// Log string
         /// </summary>
         /// <param name="value"></param>
         public void LogString(string value, Logtype type = Logtype.Normal)
         {
             Logtype = type;
             Log = value;// + "\r\n";
-            OnPropertyChanged(nameof(Log));
         }
+        /// <summary>
+        /// Log progress value
+        /// </summary>
+        /// <param name="value"></param>
+        public void LogProgress(float value)
+        {
+            Progress = new Tuple<float, string>(value, "");
+        }
+        /// <summary>
+        /// Log progress value
+        /// </summary>
+        /// <param name="value"></param>
+        public void LogProgress(float value, string str)
+        {
+            Progress = new Tuple<float, string>(value, str);
+        }
+        /// <summary>
+        /// Log progress incrementally
+        /// </summary>
+        /// <param name="value"></param>
+        public void LogProgressInc(float value, string str)
+        {
+            Progress = new Tuple<float, string>(Progress.Item1 + value, str);
+        }
+
+
         /// <summary>
         /// Log an Interpretable LogMessage
         /// </summary>
@@ -142,6 +197,12 @@ namespace WolvenKit.Common.Services
                 string message = value?.Substring(1);
                 data.Value = message;
 
+                // whitelist errors and downgrade to warnings
+                if (message.Contains("wintab32.dll") && data.Flag == WccLogFlag.WLF_Error)
+                    data.Flag = WccLogFlag.WLF_Warning;
+                // downgrade some warnings to info
+                if (message.Contains("Failed to load existing cooking data base from") && data.Flag == WccLogFlag.WLF_Warning)
+                    data.Flag = WccLogFlag.WLF_Info;
             }
             catch (Exception)
             {

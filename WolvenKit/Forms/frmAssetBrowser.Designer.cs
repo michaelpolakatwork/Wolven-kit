@@ -50,7 +50,7 @@ namespace WolvenKit
             this.label1 = new System.Windows.Forms.Label();
             this.ClearFiles = new System.Windows.Forms.Button();
             this.MarkSelected = new System.Windows.Forms.Button();
-            this.filetypeCB = new System.Windows.Forms.ComboBox();
+            this.fileExtensionsCB = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -72,23 +72,28 @@ namespace WolvenKit
             this.bookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lExtension = new System.Windows.Forms.Label();
-            this.extensionCB = new System.Windows.Forms.ComboBox();
+            this.bundleExtensionCB = new System.Windows.Forms.ComboBox();
             this.addDLCFile = new System.Windows.Forms.Button();
             this.homeBTN = new System.Windows.Forms.Button();
             this.fileSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.limitCheckBox = new System.Windows.Forms.CheckBox();
+            this.limitUpDown = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxUncook = new System.Windows.Forms.CheckBox();
+            this.checkBoxExport = new System.Windows.Forms.CheckBox();
             this.filebrowserMenuStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSplitContainer)).BeginInit();
             this.fileSplitContainer.Panel1.SuspendLayout();
             this.fileSplitContainer.Panel2.SuspendLayout();
             this.fileSplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.limitUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // btOpen
             // 
             this.btOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btOpen.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btOpen.Location = new System.Drawing.Point(12, 499);
+            this.btOpen.Location = new System.Drawing.Point(9, 499);
             this.btOpen.Name = "btOpen";
             this.btOpen.Size = new System.Drawing.Size(145, 23);
             this.btOpen.TabIndex = 3;
@@ -113,7 +118,7 @@ namespace WolvenKit
             this.fileListView.LargeImageList = this.treeImages;
             this.fileListView.Location = new System.Drawing.Point(0, 0);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(523, 374);
+            this.fileListView.Size = new System.Drawing.Size(522, 374);
             this.fileListView.SmallImageList = this.treeImages;
             this.fileListView.TabIndex = 5;
             this.fileListView.UseCompatibleStateImageBehavior = false;
@@ -259,17 +264,17 @@ namespace WolvenKit
             this.MarkSelected.UseVisualStyleBackColor = true;
             this.MarkSelected.Click += new System.EventHandler(this.MarkSelected_Click);
             // 
-            // filetypeCB
+            // fileExtensionsCB
             // 
-            this.filetypeCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.filetypeCB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.filetypeCB.FormattingEnabled = true;
-            this.filetypeCB.Items.AddRange(new object[] {
+            this.fileExtensionsCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileExtensionsCB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.fileExtensionsCB.FormattingEnabled = true;
+            this.fileExtensionsCB.Items.AddRange(new object[] {
             "Any"});
-            this.filetypeCB.Location = new System.Drawing.Point(605, 72);
-            this.filetypeCB.Name = "filetypeCB";
-            this.filetypeCB.Size = new System.Drawing.Size(104, 21);
-            this.filetypeCB.TabIndex = 11;
+            this.fileExtensionsCB.Location = new System.Drawing.Point(605, 72);
+            this.fileExtensionsCB.Name = "fileExtensionsCB";
+            this.fileExtensionsCB.Size = new System.Drawing.Size(104, 21);
+            this.fileExtensionsCB.TabIndex = 11;
             // 
             // button1
             // 
@@ -305,8 +310,9 @@ namespace WolvenKit
             // 
             // button2
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(472, 499);
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(623, 96);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(105, 23);
             this.button2.TabIndex = 17;
@@ -328,7 +334,7 @@ namespace WolvenKit
             this.pathlistview.Location = new System.Drawing.Point(0, 0);
             this.pathlistview.Name = "pathlistview";
             this.pathlistview.ShowItemToolTips = true;
-            this.pathlistview.Size = new System.Drawing.Size(265, 374);
+            this.pathlistview.Size = new System.Drawing.Size(266, 374);
             this.pathlistview.SmallImageList = this.treeImages;
             this.pathlistview.TabIndex = 14;
             this.pathlistview.UseCompatibleStateImageBehavior = false;
@@ -346,7 +352,7 @@ namespace WolvenKit
             this.clearSearch.BackgroundImage = global::WolvenKit.Properties.Resources.ExitIcon;
             this.clearSearch.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.clearSearch.Location = new System.Drawing.Point(366, 70);
-            this.clearSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.clearSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.clearSearch.Name = "clearSearch";
             this.clearSearch.Size = new System.Drawing.Size(22, 24);
             this.clearSearch.TabIndex = 18;
@@ -377,7 +383,7 @@ namespace WolvenKit
             // 
             this.caseCheckBox.AutoSize = true;
             this.caseCheckBox.Location = new System.Drawing.Point(266, 97);
-            this.caseCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.caseCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.caseCheckBox.Name = "caseCheckBox";
             this.caseCheckBox.Size = new System.Drawing.Size(94, 17);
             this.caseCheckBox.TabIndex = 23;
@@ -477,23 +483,24 @@ namespace WolvenKit
             this.lExtension.TabIndex = 25;
             this.lExtension.Text = "Type:";
             // 
-            // extensionCB
+            // bundleExtensionCB
             // 
-            this.extensionCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.extensionCB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.extensionCB.FormattingEnabled = true;
-            this.extensionCB.Items.AddRange(new object[] {
+            this.bundleExtensionCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bundleExtensionCB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bundleExtensionCB.FormattingEnabled = true;
+            this.bundleExtensionCB.Items.AddRange(new object[] {
             "Any"});
-            this.extensionCB.Location = new System.Drawing.Point(433, 72);
-            this.extensionCB.Name = "extensionCB";
-            this.extensionCB.Size = new System.Drawing.Size(104, 21);
-            this.extensionCB.TabIndex = 26;
+            this.bundleExtensionCB.Location = new System.Drawing.Point(433, 72);
+            this.bundleExtensionCB.Name = "bundleExtensionCB";
+            this.bundleExtensionCB.Size = new System.Drawing.Size(104, 21);
+            this.bundleExtensionCB.TabIndex = 26;
+            this.bundleExtensionCB.SelectionChangeCommitted += new System.EventHandler(this.bundleExtensionCB_SelectionChangeCommitted);
             // 
             // addDLCFile
             // 
             this.addDLCFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.addDLCFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.addDLCFile.Location = new System.Drawing.Point(163, 499);
+            this.addDLCFile.Location = new System.Drawing.Point(160, 499);
             this.addDLCFile.Name = "addDLCFile";
             this.addDLCFile.Size = new System.Drawing.Size(145, 23);
             this.addDLCFile.TabIndex = 27;
@@ -519,7 +526,7 @@ namespace WolvenKit
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fileSplitContainer.Location = new System.Drawing.Point(9, 120);
-            this.fileSplitContainer.Margin = new System.Windows.Forms.Padding(2);
+            this.fileSplitContainer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.fileSplitContainer.Name = "fileSplitContainer";
             // 
             // fileSplitContainer.Panel1
@@ -530,41 +537,98 @@ namespace WolvenKit
             // 
             this.fileSplitContainer.Panel2.Controls.Add(this.pathlistview);
             this.fileSplitContainer.Size = new System.Drawing.Size(791, 374);
-            this.fileSplitContainer.SplitterDistance = 523;
+            this.fileSplitContainer.SplitterDistance = 522;
             this.fileSplitContainer.SplitterWidth = 3;
             this.fileSplitContainer.TabIndex = 29;
+            // 
+            // limitCheckBox
+            // 
+            this.limitCheckBox.AutoSize = true;
+            this.limitCheckBox.Checked = true;
+            this.limitCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.limitCheckBox.Location = new System.Drawing.Point(366, 97);
+            this.limitCheckBox.Name = "limitCheckBox";
+            this.limitCheckBox.Size = new System.Drawing.Size(98, 17);
+            this.limitCheckBox.TabIndex = 30;
+            this.limitCheckBox.Text = "Limit results to :";
+            this.limitCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // limitUpDown
+            // 
+            this.limitUpDown.Location = new System.Drawing.Point(464, 96);
+            this.limitUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.limitUpDown.Name = "limitUpDown";
+            this.limitUpDown.Size = new System.Drawing.Size(64, 20);
+            this.limitUpDown.TabIndex = 32;
+            this.limitUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.limitUpDown.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            // 
+            // checkBoxUncook
+            // 
+            this.checkBoxUncook.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxUncook.AutoSize = true;
+            this.checkBoxUncook.Location = new System.Drawing.Point(314, 503);
+            this.checkBoxUncook.Name = "checkBoxUncook";
+            this.checkBoxUncook.Size = new System.Drawing.Size(64, 17);
+            this.checkBoxUncook.TabIndex = 33;
+            this.checkBoxUncook.Text = "Uncook";
+            this.checkBoxUncook.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxExport
+            // 
+            this.checkBoxExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxExport.AutoSize = true;
+            this.checkBoxExport.Location = new System.Drawing.Point(384, 503);
+            this.checkBoxExport.Name = "checkBoxExport";
+            this.checkBoxExport.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxExport.TabIndex = 34;
+            this.checkBoxExport.Text = "Export";
+            this.checkBoxExport.UseVisualStyleBackColor = true;
+            this.checkBoxExport.CheckedChanged += new System.EventHandler(this.checkBoxExport_CheckedChanged);
             // 
             // frmAssetBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(811, 525);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.checkBoxExport);
+            this.Controls.Add(this.checkBoxUncook);
+            this.Controls.Add(this.limitUpDown);
+            this.Controls.Add(this.limitCheckBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.fileSplitContainer);
             this.Controls.Add(this.homeBTN);
             this.Controls.Add(this.addDLCFile);
-            this.Controls.Add(this.extensionCB);
+            this.Controls.Add(this.bundleExtensionCB);
             this.Controls.Add(this.lExtension);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.caseCheckBox);
             this.Controls.Add(this.currentfolderCheckBox);
             this.Controls.Add(this.regexCheckbox);
             this.Controls.Add(this.clearSearch);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.filetypeCB);
+            this.Controls.Add(this.fileExtensionsCB);
             this.Controls.Add(this.MarkSelected);
             this.Controls.Add(this.ClearFiles);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.SearchBox);
             this.Controls.Add(this.pathPanel);
             this.Controls.Add(this.btOpen);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmAssetBrowser";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Asset browser";
+            this.Text = "Asset Browser";
             this.Load += new System.EventHandler(this.frmBundleExplorer_Load);
             this.filebrowserMenuStrip.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
@@ -573,6 +637,7 @@ namespace WolvenKit
             this.fileSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fileSplitContainer)).EndInit();
             this.fileSplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.limitUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -592,7 +657,7 @@ namespace WolvenKit
         private Label label1;
         private Button ClearFiles;
         private Button MarkSelected;
-        private ComboBox filetypeCB;
+        private ComboBox fileExtensionsCB;
         private Button button1;
         private Label label2;
         private Label label3;
@@ -619,9 +684,13 @@ namespace WolvenKit
         private ToolStripMenuItem tabsToolStripMenuItem;
         private ImageList treeImages;
         private Label lExtension;
-        private ComboBox extensionCB;
+        private ComboBox bundleExtensionCB;
         private Button addDLCFile;
         private Button homeBTN;
         private SplitContainer fileSplitContainer;
+        private CheckBox limitCheckBox;
+        private NumericUpDown limitUpDown;
+        private CheckBox checkBoxUncook;
+        private CheckBox checkBoxExport;
     }
 }

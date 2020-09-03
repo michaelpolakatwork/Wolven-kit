@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 
 namespace WolvenKit.Bundles
 {
-    public class Bundle : IWitcherArchiveType
+    public class Bundle : IWitcherArchive
     {
         private static readonly byte[] IDString =
         {
@@ -26,6 +27,8 @@ namespace WolvenKit.Bundles
         private uint dataoffset;
         private uint dummysize;
 
+        public List<IWitcherFile> Patchedfiles { get; set; } = new List<IWitcherFile>();
+
         public Bundle(string filename)
         {
             FileName = filename;
@@ -37,7 +40,7 @@ namespace WolvenKit.Bundles
 
         }
 
-        public string TypeName { get { return "Bundle"; } }
+        public EBundleType TypeName { get { return EBundleType.Bundle; } }
         public string FileName { get; set; }
         public Dictionary<string, BundleItem> Items { get; set; }
         
@@ -77,7 +80,7 @@ namespace WolvenKit.Bundles
                     item.Empty = reader.ReadUInt32();
                     item.Size = reader.ReadUInt32();
                     item.ZSize = reader.ReadUInt32();
-                    item.PageOFfset = reader.ReadUInt32();
+                    item.PageOffset = reader.ReadUInt32();
 
                     var date = reader.ReadUInt32();
                     var y = date >> 20;

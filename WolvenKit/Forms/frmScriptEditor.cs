@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Text;
 using ScintillaNET;
 using ScintillaNET_FindReplaceDialog;
 using WeifenLuo.WinFormsUI.Docking;
+using WolvenKit.App;
 
 namespace WolvenKit.Forms
 {
@@ -13,27 +15,33 @@ namespace WolvenKit.Forms
         private readonly FindReplace ScintillaFindReplace;
 
         public string autocompletelist = "array< PushBack string int integer bool float name range event function abstract const final private protected public theGame theInput thePlayer theSound enum struct state array false NULL true out inlined autobind editable entry exec hint import latent optional out quest saved statemachine timer break case continue else for if return switch while";
+        public bool IsUnsaved { get; set; }
 
 
-        public frmScriptEditor(string filePath)
+        public frmScriptEditor()
         {
             InitializeComponent();
-            this.ApplyTheme();
-            this.ShowIcon = false;
-            this.Text = "Witcherscript editor - " + Path.GetFileName(filePath);
+            ApplyCustomTheme();
+
             ScintillaFindReplace = new FindReplace(scintillaControl);
             ScintillaFindReplace.KeyPressed += ScintillaFindReplaceOnKeyPressed;
             this.ShowIcon = false;
-            FilePath = filePath;
+
             ConfigureScintilla();
             scintillaControl.ScrollWidth = 0;
             scintillaControl.ScrollWidthTracking = true;
-            scintillaControl.Text = File.ReadAllText(FilePath);
             scintillaControl.KeyDown += ScintillaControlOnKeyDown;
         }
 
-        public string FilePath { get; set; }
-
+        private string FilePath;
+        public string FileName => Path.GetFileName(FilePath);
+        public void LoadFile(string filePath)
+        {
+            this.Text = /*"Witcherscript editor - " + */Path.GetFileName(filePath);
+            
+            FilePath = filePath;
+            scintillaControl.Text = File.ReadAllText(FilePath);
+        }
 
         private void ConfigureScintilla()
         {
@@ -59,6 +67,11 @@ namespace WolvenKit.Forms
                 if (!scintillaControl.AutoCActive)
                     scintillaControl.AutoCShow(lenEntered, autocompletelist);
             }
+
+            // notify unsaved
+            IsUnsaved = true;
+            this.Text = $"{Path.GetFileName(FilePath)}*";
+            UIController.Get().Window.AddToOpenScripts(this);
         }
 
 
@@ -117,7 +130,6 @@ namespace WolvenKit.Forms
             numbers.Sensitive = true;
             numbers.Mask = 0;
         }
-
         private void SetupCodeFolding()
         {
             //Styles code folding
@@ -156,7 +168,6 @@ namespace WolvenKit.Forms
             // Enable automatic folding
             scintillaControl.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
         }
-
         private void ClearUsedHotKeys()
         {
             //Clear hot keys that conflict with the ones that have just been assigned.
@@ -167,12 +178,22 @@ namespace WolvenKit.Forms
 
         public void SaveFile()
         {
-            File.WriteAllText(FilePath, "");
-            using (var streamWriter = File.AppendText(FilePath))
-            {
-                streamWriter.Write(scintillaControl.Text);
-            }
-            MainController.Get().QueueLog(FilePath + " saved!", Common.Services.Logtype.Normal);
+            // encode in UTF-16LE
+            Encoding enc = Encoding.Unicode;
+
+            File.WriteAllText(FilePath, scintillaControl.Text, enc);
+
+            //using (var streamWriter = File.AppendText(FilePath))
+            //{
+            //    streamWriter.Write(scintillaControl.Text);
+            //}
+            MainController.LogString(FilePath + " saved!", Common.Services.Logtype.Normal);
+
+            // register all new classes
+            //MockKernel.Get().GetMainViewModel().ScanAndRegisterCustomClasses();
+
+            IsUnsaved = false;
+            this.Text = Path.GetFileName(FilePath);
         }
 
         private Color IntToColor(int rgbValue)
@@ -232,6 +253,41 @@ namespace WolvenKit.Forms
         private void ScintillaFindReplaceOnKeyPressed(object sender, KeyEventArgs e)
         {
             ScintillaControlOnKeyDown(sender, e);
+        }
+
+        private void frmScriptEditor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (IsUnsaved)
+            {
+                var res = MessageBox.Show($"{FileName} has been modified, save changes?", "Save Changes?",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    SaveFile();
+                    UIController.Get().Window.RemoveFromOpenScrips(this);
+                }
+                else if (res == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    UIController.Get().Window.RemoveFromOpenScrips(this);
+                }
+            }
+            
+
+        }
+
+        private void toolStripButtonSave_Click(object sender, System.EventArgs e)
+        {
+            SaveFile();
+        }
+
+        public void ApplyCustomTheme()
+        {
+            UIController.Get().ToolStripExtender.SetStyle(toolStrip, VisualStudioToolStripExtender.VsVersion.Vs2015, UIController.GetTheme());
         }
     }
 }

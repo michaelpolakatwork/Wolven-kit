@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using Ionic.Zlib;
 using LZ4;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 
 namespace WolvenKit.Cache
 {
-    public class CollisionCache : IWitcherArchiveType
+    public class CollisionCache : IWitcherArchive
     {
         public const long BIT_LENGTH_32 = 1;
         public const long BIT_LENGTH_64 = 2;
@@ -21,7 +22,7 @@ namespace WolvenKit.Cache
 
         public static byte[] Magic = { (byte)'C', (byte)'C', (byte)'3', (byte)'W' };
         public static long Version = 1;
-        public static CDateTime date = new CDateTime(null);
+        public static CDateTime date = new CDateTime(null, null, "");
         public uint InfoOffset;
         public uint NumberOfFiles;
         public uint NameTableOffset;
@@ -34,7 +35,7 @@ namespace WolvenKit.Cache
         public List<string> FileNames = new List<string>();
         public List<CollisionCacheItem> Files = new List<CollisionCacheItem>(); 
 
-        public string TypeName => "CollisionCache";
+        public EBundleType TypeName => EBundleType.CollisionCache;
         public string FileName { get; set; }
 
         public CollisionCache(string filename)
@@ -150,6 +151,7 @@ namespace WolvenKit.Cache
             {
                 this.FileNames.Add(br.ReadCR2WString());
             }
+            // go to info table
             foreach (var ci in FileNames.Select(fileName => new CollisionCacheItem
             {
                 Name = fileName,
@@ -158,17 +160,17 @@ namespace WolvenKit.Cache
                 NameOffset = br.ReadUInt32(),
                 Unk1 = br.ReadUInt32(),
                 Unk2 = br.ReadUInt64(), //null
-                PageOFfset = br.ReadUInt32(),
+                PageOffset = br.ReadUInt32(),
                 ZSize = br.ReadUInt32(),
                 Size = (long)br.ReadUInt32(),
                 Unk3 = br.ReadUInt32(),
-                guid = br.ReadBytes(16),
-                guid2 = br.ReadBytes(16),
+                unk4 = br.ReadBytes(16),
+                unk5 = br.ReadBytes(16),
                 Comtype = br.ReadByte(),
                 Tail = br.ReadBytes(7)
             }))
             {
-                Console.WriteLine("Filename: " + ci.Name);
+                //Console.WriteLine("Filename: " + ci.Name);
                 Files.Add(ci);
             }
         }
@@ -186,7 +188,7 @@ namespace WolvenKit.Cache
                     Version = 2;
                     DataOffset += 0x10;
                     for (int i = 0; i < data_array.Count; i++)
-                        data_array[i].PageOFfset = -1;
+                        data_array[i].PageOffset = -1;
                 }
 
                 if (buffersize <= CACHE_BUFFER_SIZE)
@@ -222,7 +224,7 @@ namespace WolvenKit.Cache
                 bw.Write((CalculateChecksum(FileList)));
                 //Write the actual contents of the files.
                 for (int i = 0; i < FileList.Count; i++)
-                    if (data_array[i].PageOFfset != -1)
+                    if (data_array[i].PageOffset != -1)
                     {
                         using (var ms = new MemoryStream())
                         {

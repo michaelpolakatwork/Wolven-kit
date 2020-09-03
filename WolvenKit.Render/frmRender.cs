@@ -134,7 +134,7 @@ namespace WolvenKit.Render
         private Rig rig;
         private Animations anims;
         private int currAnimIdx = -1;
-        static LoggerService Logger;
+        private ILoggerService Logger;
 
         //private static Quaternion modelAngle = new Quaternion(new Vertex3f(), 0);
         private Vector3Df modelPosition = new Vector3Df(0.0f);
@@ -156,8 +156,8 @@ namespace WolvenKit.Render
         /// <param name="e"></param>
         private void frmRender_Load(object sender, EventArgs e)
         {
-            Logger = new LoggerService(); // not working??
-            Logger.LogString("Render Init");
+            Logger = renderHelper.getLogger();
+            Logger.LogString("Render Init", Logtype.Normal);
 
             resizeTimer.Tick += ResizeTimer;
             resizeTimer.Interval = 1000;
@@ -183,6 +183,7 @@ namespace WolvenKit.Render
         {
             irrThread.Abort();
             // restart an irrlicht thread
+            skinnedMesh.Drop();
             StartIrrThread();
         }
 
@@ -328,16 +329,16 @@ namespace WolvenKit.Render
             foreach (var materialInstance in cdata.materialInstances)
             {
                 Material mat = new Material();
-                foreach (var material in materialInstance.instanceParameters)
+                foreach (var material in materialInstance.InstanceParameters)
                 {
-                    switch (material.Name)
+                    switch (material.REDName)
                     {
                         case "Diffuse":
-                            Texture diffTexture = GetTexture(driver, (material as CHandle).Handle);
+                            Texture diffTexture = GetTexture(driver, (material as IHandleAccessor).DepotPath);
                             mat.SetTexture(0, diffTexture);
                             break;
                         case "Normal":
-                            Texture normTexture = GetTexture(driver, (material as CHandle).Handle);
+                            Texture normTexture = GetTexture(driver, (material as IHandleAccessor).DepotPath);
                             mat.SetTexture(1, normTexture);
                             //mat.Type = MaterialType.NormalMapSolid;
                             break;
@@ -360,36 +361,50 @@ namespace WolvenKit.Render
         /// </summary>
         private Texture GetTexture(VideoDriver driver, string handleFilename)
         {
-            string modPath = renderHelper.getW3Mod().ModDirectory;
-            string texturePath = Path.ChangeExtension(Path.GetFullPath(modPath + "\\Bundle\\" + handleFilename)
-                .Replace("Mod\\Bundle", "Raw\\Mod\\TextureCache")
-                .Replace("DLC\\Bundle", "Raw\\DLC\\TextureCache"), null);
+            string modPath = renderHelper.getW3Mod().ModCookedDirectory;
+            string texturePath = Path.ChangeExtension(Path.Combine(modPath, handleFilename)
+                .Replace("Mod\\Cooked", "Raw\\Mod")
+                .Replace("DLC\\Cooked", "Raw\\DLC"), null);
 
             string[] textureFileExtensions = { ".dds", ".bmp", ".tga", ".jpg", ".jpeg", ".png", ".xbm" };
             Texture texture = null;
             foreach (var textureFileExtension in textureFileExtensions)
             {
-                texture = driver.GetTexture(texturePath + textureFileExtension);
-                if (texture != null)
-                    return texture; ;
-
+                var texturepath = Path.ChangeExtension(texturePath, textureFileExtension);
+                if (File.Exists(texturepath))
+                {
+                    texture = driver.GetTexture(texturePath + textureFileExtension);
+                    if (texture != null)
+                        return texture; ;
+                }
             }
-            string dlcPath = renderHelper.getW3Mod().DlcDirectory;
-            string texturePath1 = Path.ChangeExtension(Path.GetFullPath(dlcPath + "\\Bundle\\" + handleFilename)
-                .Replace("Mod\\Bundle", "Raw\\Mod\\TextureCache")
-                .Replace("DLC\\Bundle", "Raw\\DLC\\TextureCache"), null);
+
+
+            string dlcPath = renderHelper.getW3Mod().DlcCookedDirectory;
+            string texturePath1 = Path.ChangeExtension(Path.Combine(dlcPath, handleFilename)
+                .Replace("Mod\\Cooked", "Raw\\Mod")
+                .Replace("DLC\\Cooked", "Raw\\DLC"), null);
                         
             texture = null;
             foreach (var textureFileExtension in textureFileExtensions)
             {
-                texture = driver.GetTexture(texturePath + textureFileExtension);
-                if (texture != null) break;
+                var texturepath = Path.ChangeExtension(texturePath, textureFileExtension);
+                if (File.Exists(texturepath))
+                {
+                    texture = driver.GetTexture(texturePath + textureFileExtension);
+                    if (texture != null) break;
+                }
             }
             //ImageUtility.Xbm2Dds();
             if (texture == null && !suppressTextureWarning)
             {
+                // try to extract from game files
+
+
+
+
                 suppressTextureWarning = true;
-                MessageBox.Show("Have you extracted texture files properly?" + "\n\n" + "Could not parse texture: " + texturePath + " or " + texturePath1, "Missing texture!");
+                Logger.LogString($"Could not parse texture: {texturePath} or {texturePath1}", Logtype.Error);
             }
             return texture;
         }

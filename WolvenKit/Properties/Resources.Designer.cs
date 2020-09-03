@@ -63,16 +63,6 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _2c21aeda16de354ba5334551a883b481 {
-            get {
-                object obj = ResourceManager.GetObject("2c21aeda16de354ba5334551a883b481", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap AddNodefromFile_354 {
             get {
                 object obj = ResourceManager.GetObject("AddNodefromFile_354", resourceCulture);
@@ -83,9 +73,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap aERVQbx_460s {
+        internal static System.Drawing.Bitmap apb {
             get {
-                object obj = ResourceManager.GetObject("aERVQbx_460s", resourceCulture);
+                object obj = ResourceManager.GetObject("apb", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -95,7 +85,37 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap arrow_circle_315 {
             get {
-                object obj = ResourceManager.GetObject("arrow-circle-315", resourceCulture);
+                object obj = ResourceManager.GetObject("arrow_circle_315", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Asset_Browser_16x {
+            get {
+                object obj = ResourceManager.GetObject("Asset_Browser_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Asset_Browser_Other_Mod_16x {
+            get {
+                object obj = ResourceManager.GetObject("Asset_Browser_Other_Mod_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bird {
+            get {
+                object obj = ResourceManager.GetObject("bird", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -125,7 +145,7 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap box__arrow {
             get {
-                object obj = ResourceManager.GetObject("box--arrow", resourceCulture);
+                object obj = ResourceManager.GetObject("box__arrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +163,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap close {
+        internal static System.Drawing.Bitmap Clock {
             get {
-                object obj = ResourceManager.GetObject("close", resourceCulture);
+                object obj = ResourceManager.GetObject("Clock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,6 +183,16 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Compliant_16x {
+            get {
+                object obj = ResourceManager.GetObject("Compliant_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Console_16x {
             get {
                 object obj = ResourceManager.GetObject("Console_16x", resourceCulture);
@@ -173,9 +203,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap edit_letter_spacing {
+        internal static System.Drawing.Bitmap csv {
             get {
-                object obj = ResourceManager.GetObject("edit-letter-spacing", resourceCulture);
+                object obj = ResourceManager.GetObject("csv", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,9 +213,39 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap exclamation_red {
+        internal static System.Drawing.Bitmap detail {
             get {
-                object obj = ResourceManager.GetObject("exclamation-red", resourceCulture);
+                object obj = ResourceManager.GetObject("detail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Discord_32x {
+            get {
+                object obj = ResourceManager.GetObject("Discord_32x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EditTableRow_16x {
+            get {
+                object obj = ResourceManager.GetObject("EditTableRow_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap env {
+            get {
+                object obj = ResourceManager.GetObject("env", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,9 +273,19 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ExpandIcon {
+        internal static System.Drawing.Bitmap fbx {
             get {
-                object obj = ResourceManager.GetObject("ExpandIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("fbx", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fev {
+            get {
+                object obj = ResourceManager.GetObject("fev", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -226,6 +296,36 @@ namespace WolvenKit.Properties {
         internal static System.Drawing.Bitmap FileGroup_10135_16x {
             get {
                 object obj = ResourceManager.GetObject("FileGroup_10135_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Filter_16x {
+            get {
+                object obj = ResourceManager.GetObject("Filter_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FindInFile_16x {
+            get {
+                object obj = ResourceManager.GetObject("FindInFile_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FolderClosed_16x {
+            get {
+                object obj = ResourceManager.GetObject("FolderClosed_16x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -273,9 +373,39 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap info_icon_23818 {
+        internal static System.Drawing.Bitmap image {
             get {
-                object obj = ResourceManager.GetObject("info-icon-23818", resourceCulture);
+                object obj = ResourceManager.GetObject("image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ImportPackage_16x {
+            get {
+                object obj = ResourceManager.GetObject("ImportPackage_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ImportPackage_16x1 {
+            get {
+                object obj = ResourceManager.GetObject("ImportPackage_16x1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap journal {
+            get {
+                object obj = ResourceManager.GetObject("journal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,9 +423,29 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LinkValidator_16x {
+            get {
+                object obj = ResourceManager.GetObject("LinkValidator_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap loading_black {
             get {
                 object obj = ResourceManager.GetObject("loading_black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Logo {
+            get {
+                object obj = ResourceManager.GetObject("Logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -313,9 +463,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap mail {
+        internal static System.Drawing.Bitmap MailOpen_16x {
             get {
-                object obj = ResourceManager.GetObject("mail", resourceCulture);
+                object obj = ResourceManager.GetObject("MailOpen_16x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,9 +473,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap maximize {
+        internal static System.Drawing.Bitmap New_Project_dark_64x {
             get {
-                object obj = ResourceManager.GetObject("maximize", resourceCulture);
+                object obj = ResourceManager.GetObject("New_Project_dark_64x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -333,19 +483,9 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap maximize1 {
+        internal static System.Drawing.Bitmap New_Project_light_64x {
             get {
-                object obj = ResourceManager.GetObject("maximize1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap minimize {
-            get {
-                object obj = ResourceManager.GetObject("minimize", resourceCulture);
+                object obj = ResourceManager.GetObject("New_Project_light_64x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -356,6 +496,26 @@ namespace WolvenKit.Properties {
         internal static System.Drawing.Bitmap NewSolutionFolder_16x {
             get {
                 object obj = ResourceManager.GetObject("NewSolutionFolder_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Open_Project_dark_64x {
+            get {
+                object obj = ResourceManager.GetObject("Open_Project_dark_64x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Open_Project_light_64x {
+            get {
+                object obj = ResourceManager.GetObject("Open_Project_light_64x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -401,12 +561,12 @@ namespace WolvenKit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap player_record {
+        internal static System.Drawing.Icon PictureResample_16x {
             get {
-                object obj = ResourceManager.GetObject("player_record", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("PictureResample_16x", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -416,6 +576,26 @@ namespace WolvenKit.Properties {
         internal static System.Drawing.Bitmap PlayStep_16x {
             get {
                 object obj = ResourceManager.GetObject("PlayStep_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Preferences_dark_64x {
+            get {
+                object obj = ResourceManager.GetObject("Preferences_dark_64x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Preferences_light_64x {
+            get {
+                object obj = ResourceManager.GetObject("Preferences_light_64x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -436,6 +616,46 @@ namespace WolvenKit.Properties {
         internal static System.Drawing.Bitmap Property_16x {
             get {
                 object obj = ResourceManager.GetObject("Property_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap radish_32x {
+            get {
+                object obj = ResourceManager.GetObject("radish_32x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon radish_icon {
+            get {
+                object obj = ResourceManager.GetObject("radish_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redgame {
+            get {
+                object obj = ResourceManager.GetObject("redgame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap redswf {
+            get {
+                object obj = ResourceManager.GetObject("redswf", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -473,6 +693,46 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Run_16x {
+            get {
+                object obj = ResourceManager.GetObject("Run_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RunPause_16x {
+            get {
+                object obj = ResourceManager.GetObject("RunPause_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RunUpdate_16x {
+            get {
+                object obj = ResourceManager.GetObject("RunUpdate_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_16x {
+            get {
+                object obj = ResourceManager.GetObject("Save_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SaveAll_16x {
             get {
                 object obj = ResourceManager.GetObject("SaveAll_16x", resourceCulture);
@@ -503,6 +763,46 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap spawntree {
+            get {
+                object obj = ResourceManager.GetObject("spawntree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StatusInformation_exp_16x {
+            get {
+                object obj = ResourceManager.GetObject("StatusInformation_exp_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StatusInformation_grey_disabled_16x {
+            get {
+                object obj = ResourceManager.GetObject("StatusInformation_grey_disabled_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StatusNotStarted_red_16x {
+            get {
+                object obj = ResourceManager.GetObject("StatusNotStarted_red_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap stickman {
             get {
                 object obj = ResourceManager.GetObject("stickman", resourceCulture);
@@ -513,9 +813,29 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap t_shirt_gray {
+        internal static System.Drawing.Bitmap Strings_Encoder_16x {
             get {
-                object obj = ResourceManager.GetObject("t-shirt-gray", resourceCulture);
+                object obj = ResourceManager.GetObject("Strings_Encoder_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap swf {
+            get {
+                object obj = ResourceManager.GetObject("swf", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Test_16x {
+            get {
+                object obj = ResourceManager.GetObject("Test_16x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -525,7 +845,7 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ui_check_box {
             get {
-                object obj = ResourceManager.GetObject("ui-check-box", resourceCulture);
+                object obj = ResourceManager.GetObject("ui_check_box", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -535,7 +855,7 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ui_check_box_uncheck {
             get {
-                object obj = ResourceManager.GetObject("ui-check-box-uncheck", resourceCulture);
+                object obj = ResourceManager.GetObject("ui_check_box_uncheck", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -545,14 +865,514 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ui_menu_blue {
             get {
-                object obj = ResourceManager.GetObject("ui-menu-blue", resourceCulture);
+                object obj = ResourceManager.GetObject("ui_menu_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UserCode_16x {
+            get {
+                object obj = ResourceManager.GetObject("UserCode_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ValidateDocument_16x {
+            get {
+                object obj = ResourceManager.GetObject("ValidateDocument_16x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap vbrush {
+            get {
+                object obj = ResourceManager.GetObject("vbrush", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2ainfo {
+            get {
+                object obj = ResourceManager.GetObject("w2ainfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2am {
+            get {
+                object obj = ResourceManager.GetObject("w2am", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2anim {
+            get {
+                object obj = ResourceManager.GetObject("w2anim", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2animev {
+            get {
+                object obj = ResourceManager.GetObject("w2animev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2anims {
+            get {
+                object obj = ResourceManager.GetObject("w2anims", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2beh {
+            get {
+                object obj = ResourceManager.GetObject("w2beh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2behtree {
+            get {
+                object obj = ResourceManager.GetObject("w2behtree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2blb {
+            get {
+                object obj = ResourceManager.GetObject("w2blb", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2brix {
+            get {
+                object obj = ResourceManager.GetObject("w2brix", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2cent {
+            get {
+                object obj = ResourceManager.GetObject("w2cent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2comm {
+            get {
+                object obj = ResourceManager.GetObject("w2comm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2conv {
+            get {
+                object obj = ResourceManager.GetObject("w2conv", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2cube {
+            get {
+                object obj = ResourceManager.GetObject("w2cube", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2cutscene {
+            get {
+                object obj = ResourceManager.GetObject("w2cutscene", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2ds {
+            get {
+                object obj = ResourceManager.GetObject("w2ds", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2dset {
+            get {
+                object obj = ResourceManager.GetObject("w2dset", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2ent {
+            get {
+                object obj = ResourceManager.GetObject("w2ent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2expr {
+            get {
+                object obj = ResourceManager.GetObject("w2expr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2f {
+            get {
+                object obj = ResourceManager.GetObject("w2f", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2faces {
+            get {
+                object obj = ResourceManager.GetObject("w2faces", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2fnt {
+            get {
+                object obj = ResourceManager.GetObject("w2fnt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2goalcrv {
+            get {
+                object obj = ResourceManager.GetObject("w2goalcrv", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2guidesc {
+            get {
+                object obj = ResourceManager.GetObject("w2guidesc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2je {
+            get {
+                object obj = ResourceManager.GetObject("w2je", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2job {
+            get {
+                object obj = ResourceManager.GetObject("w2job", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2l {
+            get {
+                object obj = ResourceManager.GetObject("w2l", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2mesh {
+            get {
+                object obj = ResourceManager.GetObject("w2mesh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2mg {
+            get {
+                object obj = ResourceManager.GetObject("w2mg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2mi {
+            get {
+                object obj = ResourceManager.GetObject("w2mi", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2p {
+            get {
+                object obj = ResourceManager.GetObject("w2p", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2phase {
+            get {
+                object obj = ResourceManager.GetObject("w2phase", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2pr {
+            get {
+                object obj = ResourceManager.GetObject("w2pr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2ps {
+            get {
+                object obj = ResourceManager.GetObject("w2ps", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2qlog {
+            get {
+                object obj = ResourceManager.GetObject("w2qlog", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2quest {
+            get {
+                object obj = ResourceManager.GetObject("w2quest", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2rag {
+            get {
+                object obj = ResourceManager.GetObject("w2rag", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2ragdoll {
+            get {
+                object obj = ResourceManager.GetObject("w2ragdoll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2react {
+            get {
+                object obj = ResourceManager.GetObject("w2react", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2rig {
+            get {
+                object obj = ResourceManager.GetObject("w2rig", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2rigm {
+            get {
+                object obj = ResourceManager.GetObject("w2rigm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2sbnk {
+            get {
+                object obj = ResourceManager.GetObject("w2sbnk", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2scene {
+            get {
+                object obj = ResourceManager.GetObject("w2scene", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2spwn {
+            get {
+                object obj = ResourceManager.GetObject("w2spwn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2steer {
+            get {
+                object obj = ResourceManager.GetObject("w2steer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2surf {
+            get {
+                object obj = ResourceManager.GetObject("w2surf", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap w2w {
+            get {
+                object obj = ResourceManager.GetObject("w2w", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WCC_32x {
+            get {
+                object obj = ResourceManager.GetObject("WCC_32x", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1250\uc1\adeff31507\deff0\stshfdbch31506\stshfloch31506\stshfhich31506\stshfbi31507\deflang1045\deflangfe1045\themelang2057\themelangfe1041\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset238\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f1\fbidi \fswiss\fcharset238\fprq2{\*\panose 020b0604020202020204}Arial;}
-        ///{\f2\fbidi \fmodern\fcharset238\fprq1{\*\panose 02070309020205020404}Courier New;}{\f3\fbidi \froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol;}{ [rest of string was truncated]&quot;;.
+        ///{\f2\fbidi \fmodern\fcharset238\fprq1{\*\panose 02070309020205020404}Courier New;}{\f3\fbidi \froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol;}{\ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string wcc_eula {
             get {
@@ -561,11 +1381,51 @@ namespace WolvenKit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap window_close_24x {
+            get {
+                object obj = ResourceManager.GetObject("window_close_24x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap window_maximize_24x {
+            get {
+                object obj = ResourceManager.GetObject("window_maximize_24x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap window_minimize_24x {
+            get {
+                object obj = ResourceManager.GetObject("window_minimize_24x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap witcher3 {
+            get {
+                object obj = ResourceManager.GetObject("witcher3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon witcher_cursor {
+        internal static System.Drawing.Icon witcher3_101 {
             get {
-                object obj = ResourceManager.GetObject("witcher_cursor", resourceCulture);
+                object obj = ResourceManager.GetObject("witcher3_101", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -573,9 +1433,39 @@ namespace WolvenKit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap witcher3_101 {
+        internal static System.Drawing.Bitmap WK_Logo2_32 {
             get {
-                object obj = ResourceManager.GetObject("witcher3_101", resourceCulture);
+                object obj = ResourceManager.GetObject("WK_Logo2_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Wkit_logo_500x {
+            get {
+                object obj = ResourceManager.GetObject("Wkit_logo_500x", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wkit_splash {
+            get {
+                object obj = ResourceManager.GetObject("wkit_splash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wkit_splash2 {
+            get {
+                object obj = ResourceManager.GetObject("wkit_splash2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -595,7 +1485,37 @@ namespace WolvenKit.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap wooden_box__arrow {
             get {
-                object obj = ResourceManager.GetObject("wooden-box--arrow", resourceCulture);
+                object obj = ResourceManager.GetObject("wooden_box__arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap worldmap {
+            get {
+                object obj = ResourceManager.GetObject("worldmap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap xbm {
+            get {
+                object obj = ResourceManager.GetObject("xbm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap xml {
+            get {
+                object obj = ResourceManager.GetObject("xml", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

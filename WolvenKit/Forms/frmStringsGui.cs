@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 namespace WolvenKit
 {
     using Common;
+    using WolvenKit.App;
 
     enum EDisplayNameType
     {
@@ -45,7 +46,7 @@ namespace WolvenKit
 
         DataTable dataTableGridViewSource;
 
-        W3Mod activeMod = MainController.Get().Window.ActiveMod;
+        W3Mod activeMod = UIController.Get().Window.ActiveMod;
 
         public frmStringsGui()
         {
@@ -53,6 +54,8 @@ namespace WolvenKit
 
             comboBoxLanguagesMode.SelectedIndex = 0;
             CreateDataTable();
+
+            this.Icon = new Icon(@"Resources\Icons\GUI\Wkit_dark_16x.ico", new Size(16, 16));
 
             if (activeMod != null)
             {

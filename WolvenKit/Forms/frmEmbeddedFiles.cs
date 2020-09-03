@@ -3,6 +3,10 @@ using BrightIdeasSoftware;
 using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.CR2W;
 using WolvenKit.Services;
+using System.Linq;
+using WolvenKit.App.Model;
+using System.Windows.Controls;
+using WolvenKit.App.ViewModels;
 
 namespace WolvenKit
 {
@@ -42,52 +46,34 @@ namespace WolvenKit
 
             if (e.ClickCount == 2)
             {
-                var mem = new MemoryStream(((CR2WEmbeddedWrapper) e.Model).Data);
+                var mem = new MemoryStream(((CR2WEmbeddedWrapper) e.Model).Data.ToArray());
 
-                var doc = MainController.Get().LoadDocument("Embedded file", mem);
+                var doc = UIController.Get().LoadDocument("Embedded file", mem);
                 if (doc != null)
                 {
-                    doc.OnFileSaved += OnFileSaved;
-                    doc.SaveTarget = (CR2WEmbeddedWrapper) e.Model;
+                    var vm = doc.GetViewModel();
+                    vm.OnFileSaved += OnFileSaved;
+                    vm.SaveTarget = (CR2WEmbeddedWrapper) e.Model;
                 }
             }
         }
 
         private void OnFileSaved(object sender, FileSavedEventArgs e)
         {
-            var doc = (frmCR2WDocument) sender;
-            var editvar = (CR2WEmbeddedWrapper) doc.SaveTarget;
-            editvar.Data = ((MemoryStream) e.Stream).ToArray();
+            var vm = (DocumentViewModel) sender;
+            var editvar = (CR2WEmbeddedWrapper) vm.SaveTarget;
+            editvar.Data = ((MemoryStream) e.Stream).ToArray().ToList();
         }
 
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
+            this.listView.BackColor = UIController.GetBackColor();
+            this.listView.AlternateRowBackColor = UIController.GetPalette().OverflowButtonHovered.Background;
 
-            this.listView.BackColor = theme.ColorPalette.ToolWindowTabSelectedInactive.Background;
-            this.listView.AlternateRowBackColor = theme.ColorPalette.OverflowButtonHovered.Background;
+            this.listView.ForeColor = UIController.GetForeColor();
 
-            this.listView.ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text;
-            HeaderFormatStyle hfs = new HeaderFormatStyle()
-            {
-                Normal = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.DockTarget.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                },
-                Hot = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.OverflowButtonHovered.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                },
-                Pressed = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.CommandBarToolbarButtonPressed.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                }
-            };
-            this.listView.HeaderFormatStyle = hfs;
-            listView.UnfocusedSelectedBackColor = theme.ColorPalette.CommandBarToolbarButtonPressed.Background;
+            this.listView.HeaderFormatStyle = UIController.GetHeaderFormatStyle();
+            listView.UnfocusedSelectedBackColor = UIController.GetPalette().CommandBarToolbarButtonPressed.Background;
         }
     }
 }

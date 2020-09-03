@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using WolvenKit.App.Model;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 
@@ -37,7 +38,7 @@ namespace WolvenKit.FlowTreeEditors
 
         public virtual string GetCopyText()
         {
-            return chunk.Name;
+            return chunk.REDName;
         }
 
         public event EventHandler<SelectChunkArgs> OnSelectChunk;
@@ -70,11 +71,11 @@ namespace WolvenKit.FlowTreeEditors
 
         public virtual void UpdateView()
         {
-            lblTitle.Text = chunk.Name;
+            lblTitle.Text = chunk.REDName;
             Size = TextRenderer.MeasureText(lblTitle.Text, lblTitle.Font) + Margin.Size;
         }
 
-        public virtual List<CPtr> GetConnections()
+        public virtual List<IPtrAccessor> GetConnections()
         {
             return null;
         }

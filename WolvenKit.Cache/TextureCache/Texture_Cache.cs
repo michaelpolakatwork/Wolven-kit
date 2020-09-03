@@ -6,17 +6,18 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 
 namespace WolvenKit.Cache
 {
-    public class TextureCache : IWitcherArchiveType
+    public class TextureCache : IWitcherArchive
     {
         //The images packed into this Texture cache file
         public List<TextureCacheItem> Files;
 
-        public string TypeName => "TextureCache";
+        public EBundleType TypeName => EBundleType.TextureCache;
         public string FileName { get; set; }
         public List<uint> Chunkoffsets;
         public UInt64 Crc;
@@ -30,6 +31,7 @@ namespace WolvenKit.Cache
 
         public TextureCache()
         {
+
             Chunkoffsets = new List<uint>();
             Names = new List<string>();
             Files = new List<TextureCacheItem>();
@@ -44,8 +46,8 @@ namespace WolvenKit.Cache
         {
             try
             {
-                            FileName = filepath;
-            Chunkoffsets = new List<uint>();
+                FileName = filepath;
+                Chunkoffsets = new List<uint>();
                 using (var br = new BinaryReader(new FileStream(filepath, FileMode.Open)))
                 {
                     Files = new List<TextureCacheItem>();
@@ -80,10 +82,10 @@ namespace WolvenKit.Cache
                         {
                             Name = Names[i],
                             ParentFile = FileName,
-                            Hash = br.ReadInt32(),
+                            Hash = br.ReadUInt32(),
                             /*-------------TextureCacheEntryBase---------------*/
                             PathStringIndex = br.ReadInt32(),
-                            PageOFfset = br.ReadInt32(),
+                            PageOffset = br.ReadInt32(),
                             CompressedSize = br.ReadInt32(),
                             UncompressedSize = br.ReadInt32(),
                             BaseAlignment = br.ReadUInt32(),
@@ -95,22 +97,27 @@ namespace WolvenKit.Cache
                             NumMipOffsets = br.ReadInt32(),
                             TimeStamp = br.ReadInt64(),
                             /*-------------TextureCacheEntryBase---------------*/
-                            Type = br.ReadInt16(),
+                            Type1 = br.ReadByte(),
+                            Type2 = br.ReadByte(),
                             IsCube = br.ReadByte(),
                             Unk1 = br.ReadByte()
                         };
                         Files.Add(ti);
-                    }
+/*                        if (ti.Name.Contains("area"))
+                            {
+                                Console.WriteLine("found one");
+                            }
+*/                    }
                     //BUG: "C:\\Users\\bence.hambalko\\Documents\\The Witcher 3\\bin\\x64\\..\\..\\Mods\\modW3EE\\content\\texture.cache" dies here! Investigate!!!!!!!!!!!!!
                     foreach (var t in Files)
                     {
-                        br.BaseStream.Seek(t.PageOFfset * 4096, SeekOrigin.Begin);
+                        br.BaseStream.Seek(t.PageOffset * 4096, SeekOrigin.Begin);
                         t.ZSize = br.ReadUInt32(); //Compressed size
                         t.Size = br.ReadInt32(); //Uncompressed size
                         t.SliceIdx = br.ReadByte(); //maybe the 48bit part of OFFSET
 
                         var lastpos = br.BaseStream.Position + t.ZSize;
-                        
+
 
                         for (int i = 0; i < t.NumMipOffsets; i++)
                         {

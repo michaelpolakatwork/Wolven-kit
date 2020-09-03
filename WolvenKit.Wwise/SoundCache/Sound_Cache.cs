@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 using WolvenKit.CR2W;
 using WolvenKit.Wwise;
 using WolvenKit.Wwise.SoundCache;
@@ -15,7 +16,7 @@ namespace WolvenKit.Cache
     /// <summary>
     /// The soud archives of Witcher 3. Contains .wem and .bnk sound files.
     /// </summary>
-    public class SoundCache : IWitcherArchiveType
+    public class SoundCache : IWitcherArchive
     {
         public const long BIT_LENGTH_32 = 1;
         public const long BIT_LENGTH_64 = 2;
@@ -34,10 +35,10 @@ namespace WolvenKit.Cache
         public long buffsize;
         public long checksum;
 
-        public string TypeName { get { return "SoundCache"; } }
+        public EBundleType TypeName => EBundleType.SoundCache;
         public string FileName { get; set; }
 
-        public static SoundBanksInfoXML info => new SoundBanksInfoXML("SoundCache\\soundbanksinfo.xml");
+        public static SoundBanksInfoXML info = new SoundBanksInfoXML("SoundCache\\soundbanksinfo.xml");
 
         /// <summary>
         /// The files packed into the original soundcache.
@@ -183,13 +184,13 @@ namespace WolvenKit.Cache
                 if (Version >= 2)
                 {
                     sf.NameOffset = br.ReadInt64();
-                    sf.PageOFfset = br.ReadInt64();
+                    sf.PageOffset = br.ReadInt64();
                     sf.Size = br.ReadInt64();
                 }
                 else
                 {
                     sf.NameOffset = br.ReadUInt32();
-                    sf.PageOFfset = br.ReadUInt32();
+                    sf.PageOffset = br.ReadUInt32();
                     sf.Size = br.ReadUInt32();
                 }
                 Files.Add(sf);
@@ -209,7 +210,7 @@ namespace WolvenKit.Cache
         public static string GetIDFromPath(string path)
         {
             var split = path.Split(Path.DirectorySeparatorChar);
-            var actualpath = split.SkipWhile(x => x != "SoundCache").Skip(1).Aggregate("", (c, n) => c += Path.DirectorySeparatorChar + n).Trim().Trim(Path.DirectorySeparatorChar);
+            var actualpath = split.SkipWhile(x => x != EBundleType.SoundCache.ToString()).Skip(1).Aggregate("", (c, n) => c += Path.DirectorySeparatorChar + n).Trim().Trim(Path.DirectorySeparatorChar);
             if (actualpath.EndsWith(".wem"))
             {
                 if (info.StreamedFiles.Any(x => x.Path == actualpath))
@@ -246,7 +247,7 @@ namespace WolvenKit.Cache
                     Version = 2;
                     DataOffset += 0x10;
                     for (int i = 0; i < data_array.Count; i++)
-                        data_array[i].PageOFfset = -1;
+                        data_array[i].PageOffset = -1;
                 }
 
                 if (buffersize <= CACHE_BUFFER_SIZE)
@@ -283,7 +284,7 @@ namespace WolvenKit.Cache
                 bw.Write((CalculateChecksum(FileList)));
                 //Write the actual contents of the files.
                 for (int i = 0; i < FileList.Count; i++)
-                    if (data_array[i].PageOFfset != -1)
+                    if (data_array[i].PageOffset != -1)
                         bw.Write(File.ReadAllBytes(FileList[i]));
                 //Write filenames and the offsets and such for the files.
                 bw.Write(GetNames(FileList));

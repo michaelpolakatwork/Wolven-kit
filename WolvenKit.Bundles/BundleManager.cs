@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 
 namespace WolvenKit.Bundles
 {
-    public class BundleManager : IWitcherArchive
+    public class BundleManager : IWitcherArchiveManager
     {
         public BundleManager()
         {
@@ -22,9 +24,11 @@ namespace WolvenKit.Bundles
         public Dictionary<string, Bundle> Bundles { get; set; }
         public WitcherTreeNode RootNode { get; set; }
         public List<IWitcherFile> FileList { get; set; }
-        public string TypeName { get { return new Bundle().TypeName; } }
+        public EBundleType TypeName => EBundleType.Bundle;
         public List<string> Extensions { get; set; }
         public AutoCompleteStringCollection AutocompleteSource { get; set; }
+
+        private string[] vanillaDLClist = new string[] { "DLC1", "DLC2", "DLC3", "DLC4", "DLC5", "DLC6", "DLC7", "DLC8", "DLC9", "DLC10", "DLC11", "DLC12", "DLC13", "DLC14", "DLC15", "DLC16", "bob", "ep1" };
 
         /// <summary>
         ///     Load a single mod bundle
@@ -54,18 +58,29 @@ namespace WolvenKit.Bundles
         ///     Load a single bundle
         /// </summary>
         /// <param name="filename"></param>
-        public void LoadBundle(string filename)
+        public void LoadBundle(string filename, bool ispatch = false)
         {
             if (Bundles.ContainsKey(filename))
                 return;
 
             var bundle = new Bundle(filename);
-
-            foreach (var item in bundle.Items)
+            foreach (KeyValuePair<string, BundleItem> item in bundle.Items)
             {
+                // add new key if the file isn't already in another bundle
                 if (!Items.ContainsKey(item.Key))
                     Items.Add(item.Key, new List<IWitcherFile>());
 
+                // if file is already in another bundle
+                if (ispatch && Items[item.Key].Count > 0)
+                {
+                    // if file is already in content0 remove file.
+                    List<IWitcherFile> filesInBundles = Items[item.Key];
+                    if (filesInBundles.First().Bundle.FileName.Contains("content0"))
+                    {
+                        bundle.Patchedfiles.Add(filesInBundles.First());
+                        filesInBundles.RemoveAt(0);
+                    }
+                }
                 Items[item.Key].Add(item.Value);
             }
 
@@ -78,7 +93,7 @@ namespace WolvenKit.Bundles
         /// <param name="exedir">Path to executable directory</param>
         public void LoadAll(string exedir)
         {
-            var content = Path.Combine(exedir, @"..\..\content\");
+            var content = Path.Combine(new FileInfo(exedir).Directory.Parent.FullName, "content");
 
             var contentdirs = new List<string>(Directory.GetDirectories(content, "content*"));
             contentdirs.Sort(new AlphanumComparator<string>());
@@ -91,19 +106,25 @@ namespace WolvenKit.Bundles
             patchdirs.Sort(new AlphanumComparator<string>());
             foreach (var file in patchdirs.SelectMany(dir => Directory.GetFiles(dir, "*.bundle", SearchOption.AllDirectories)))
             {
-                LoadBundle(file);
+                LoadBundle(file, true);
             }
 
-            var dlc = Path.Combine(exedir, @"..\..\DLC\");
+            var dlc = Path.Combine(new FileInfo(exedir).Directory.Parent.FullName, "DLC");
             if (Directory.Exists(dlc))
             {
                 var dlcdirs = new List<string>(Directory.GetDirectories(dlc));
                 dlcdirs.Sort(new AlphanumComparator<string>());
-                foreach (var file in dlcdirs.Where(dir => new Regex("(DLC..)|(DLC.)|(BOB)|(ep.)|(bob)|(EP.)").IsMatch(Path.GetFileName(dir ?? ""))).SelectMany(dir => Directory.GetFiles(dir ?? "", "*.bundle", SearchOption.AllDirectories).OrderBy(k => k)))
+
+                foreach (var file in dlcdirs
+                    .Where(_ => vanillaDLClist.Contains(new DirectoryInfo(_).Name))
+                    .SelectMany(dir => Directory.GetFiles(dir ?? "", "*.bundle", SearchOption.AllDirectories)
+                    .OrderBy(k => k)))
                 {
                     LoadBundle(file);
                 }
             }
+
+
             RebuildRootNode();
         }
 
@@ -130,7 +151,9 @@ namespace WolvenKit.Bundles
             {
                 var dlcdirs = new List<string>(Directory.GetDirectories(dlc));
                 dlcdirs.Sort(new AlphanumComparator<string>());
-                foreach (var file in dlcdirs.Where(dir => !new Regex("(DLC..)|(DLC.)|(BOB)|(bob)|(EP.)|(ep.)").IsMatch(Path.GetFileName(dir ?? ""))).SelectMany(dir => Directory.GetFiles(dir ?? "", "*.bundle", SearchOption.AllDirectories).OrderBy(k => k)))
+
+                var tmp = dlcdirs.Where(_ => !vanillaDLClist.Contains(new DirectoryInfo(_).Name)).ToList();
+                foreach (var file in tmp.SelectMany(dir => Directory.GetFiles(dir ?? "", "*.bundle", SearchOption.AllDirectories).OrderBy(k => k)))
                 {
                     LoadModBundle(file);
                 }
@@ -152,8 +175,10 @@ namespace WolvenKit.Bundles
         /// </summary>
         public void RebuildRootNode()
         {
-            RootNode = new WitcherTreeNode();
-            RootNode.Name = new Bundle().TypeName;
+            RootNode = new WitcherTreeNode(EBundleType.Bundle)
+            {
+                Name = EBundleType.Bundle.ToString()
+            };
             foreach (var item in Items)
             {
                 var currentNode = RootNode;

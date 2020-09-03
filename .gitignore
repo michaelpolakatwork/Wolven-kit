@@ -89,6 +89,9 @@ ipch/
 *.vspx
 *.sap
 
+# VTunes Profiler
+WolvenKit/VTune Profiler Results
+
 # TFS 2012 Local Workspace
 $tf/
 
@@ -257,3 +260,10 @@ W3Edit.Render/Models/**
 
 # Ignore nuget packages
 packages/**
+
+#Ignore doxygen doc
+docs/html/*
+docs/doxygen.warnings
+
+#Local git wiki repository - preferred to not delve into git submodules/subtree horrors
+Wolven-kit.wiki

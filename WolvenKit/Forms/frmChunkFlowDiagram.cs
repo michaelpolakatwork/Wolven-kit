@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using WolvenKit.App.Model;
 using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 using WolvenKit.FlowTreeEditors;
@@ -31,7 +32,7 @@ namespace WolvenKit
         private readonly Pen selectionBorder;
         private readonly Pen selectionItemHighlight;
         private readonly Brush selectionItemHighlightBrush;
-        private CPtr connectingSource;
+        private IPtrAccessor connectingSource;
         private ChunkEditor connectingSourceEditor;
         private int connectingSourceIndex;
         private ChunkEditor connectingTarget;
@@ -86,7 +87,7 @@ namespace WolvenKit
 
             if (File != null && File.chunks.Count > 0)
             {
-                switch (activeRoot.Type)
+                switch (activeRoot.REDType)
                 {
                     case "CQuestPhase":
                         getQuestPhaseRootNodes(rootNodes);
@@ -170,8 +171,8 @@ namespace WolvenKit
                 var conns = editor.GetConnections();
                 if (conns != null) {
                     foreach (var conn in conns) {
-                        if (conn.PtrTarget != null) {
-                            createEditor(depth + 1, conn.PtrTarget);
+                        if (conn.Reference != null) {
+                            createEditor(depth + 1, conn.Reference);
                         }
                     }
                 }
@@ -206,42 +207,42 @@ namespace WolvenKit
 
         private void getStorySceneRootNodes(List<CR2WExportWrapper> rootNodes)
         {
-            var controlPartsObj = File.chunks[0].GetVariableByName("controlParts");
-            if (controlPartsObj != null && controlPartsObj is CArray)
+            CStoryScene resource = (CStoryScene)File.chunks[0].data;
+            CArray<CPtr<CStorySceneControlPart>> controlParts = resource.ControlParts;
+            if (controlParts != null)
             {
-                var controlParts = (CArray) controlPartsObj;
-                rootNodes.AddRange(from part in controlParts.OfType<CPtr>() where part != null && part.PtrTargetType == "CStorySceneInput" select part.PtrTarget);
+                rootNodes.AddRange(from part in controlParts.Elements.OfType<CPtr<CStorySceneControlPart>>() where part != null && part.GetPtrTargetType() == "CStorySceneInput" select part.Reference); ;
             }
         }
-        
+
         private void getQuestPhaseRootNodes(List<CR2WExportWrapper> rootNodes)
         {
-            var graphObj = File.chunks[0].GetVariableByName("graph");
-            if (graphObj != null && graphObj is CPtr)
+            CQuestPhase resource = (CQuestPhase)File.chunks[0].data;
+            CPtr<CQuestGraph> graphObj = resource.Graph;
+            if (graphObj != null)
             {
-                var graphBlocks = ((CPtr)graphObj).PtrTarget.GetVariableByName("graphBlocks");
-                if (graphBlocks != null && graphBlocks is CArray)
+                var graphBlocks = (graphObj.Reference.data as CQuestGraph).GraphBlocks;
+                if (graphBlocks != null)
                 {
-                    var controlParts = (CArray) graphBlocks;
-                    rootNodes.AddRange(from part in controlParts.OfType<CPtr>() where part != null && part.PtrTargetType == "CQuestPhaseInputBlock" select part.PtrTarget);
+                    rootNodes.AddRange(from part in graphBlocks.Elements.OfType<CPtr<CGraphBlock>>() where part != null && part.GetPtrTargetType() == "CQuestPhaseInputBlock" select part.Reference);
                 }
             }
         }
-        
+
         private void getQuestRootNodes(List<CR2WExportWrapper> rootNodes)
         {
-            var graphObj = File.chunks[0].GetVariableByName("graph");
-            if (graphObj != null && graphObj is CPtr)
+            CQuest quest = (CQuest)File.chunks[0].data;
+            CPtr<CQuestGraph> graphObj = quest.Graph;
+            if (graphObj != null)
             {
-                var graphBlocks = ((CPtr)graphObj).PtrTarget.GetVariableByName("graphBlocks");
-                if (graphBlocks != null && graphBlocks is CArray)
+                CArray<CPtr<CGraphBlock>> graphBlocks = (graphObj.Reference.data as CQuestGraph).GraphBlocks;
+                if (graphBlocks != null)
                 {
-                    var controlParts = (CArray) graphBlocks;
-                    rootNodes.AddRange(from part in controlParts.OfType<CPtr>() where part != null && part.PtrTargetType == "CQuestStartBlock" select part.PtrTarget);
+                    rootNodes.AddRange(from part in graphBlocks.Elements.OfType<CPtr<CGraphBlock>>() where part != null && part.GetPtrTargetType() == "CQuestStartBlock" select part.Reference);
                 }
             }
-            
-            
+
+
         }
 
         public ChunkEditor GetEditor(CR2WExportWrapper c)
@@ -249,7 +250,7 @@ namespace WolvenKit
             if (c.data is CStorySceneSection)
                 return new SceneSectionEditor();
 
-            switch (c.Type)
+            switch (c.REDType)
             {
                 // quest
                 
@@ -282,12 +283,12 @@ namespace WolvenKit
                 var pen = editorSelected ? selectionItemHighlight : Pens.Black;
 
                 var i = 0;
-                List<CPtr> conns = null;
+                List<IPtrAccessor> conns = null;
 
                 try {
                     conns = c.GetConnections();
                 }
-                catch (Exception exception) {
+                catch (Exception) {
                     // eat the exception, allready logging the exception when creating the node editor
                 }
 
@@ -295,9 +296,9 @@ namespace WolvenKit
                 {
                     foreach (var conn in conns)
                     {
-                        if (ChunkEditors.ContainsKey(conn.PtrTarget))
+                        if (ChunkEditors.ContainsKey(conn.Reference))
                         {
-                            var c2 = ChunkEditors[conn.PtrTarget];
+                            var c2 = ChunkEditors[conn.Reference];
                             var sp = c.GetConnectionLocation(i);
                             e.Graphics.FillRectangle(brush, c.Location.X + c.Width,
                                 c.Location.Y + sp.Y - connectionPointSize/2, connectionPointSize, connectionPointSize);
@@ -515,7 +516,7 @@ namespace WolvenKit
         {
             if (connectingTarget != null)
             {
-                connectingSource.PtrTarget = connectingTarget.Chunk;
+                connectingSource.Reference = connectingTarget.Chunk;
             }
         }
 

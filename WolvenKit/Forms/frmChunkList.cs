@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using WolvenKit.App;
+using WolvenKit.App.Model;
 using WolvenKit.CR2W;
 using WolvenKit.Services;
 
@@ -84,7 +86,7 @@ namespace WolvenKit
             if (listview)
                 treeListView.Roots = File.chunks;
             else
-                treeListView.Roots = File.chunks.Where(_ => _.Parent == null).ToList();
+                treeListView.Roots = File.chunks.Where(_ => _.GetParent() == null).ToList();
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -119,12 +121,18 @@ namespace WolvenKit
         private void addChunkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dlg = new frmAddChunk();
+            var selectedchunk = treeListView.SelectedObjects.Cast<CR2WExportWrapper>().FirstOrDefault();
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     var chunk = File.CreateChunk(dlg.ChunkType);
+                    if (selectedchunk != null)
+                    {
+                        chunk.SetParent(selectedchunk);
+                    }
+                    
                     UpdateList();
 
                     if (OnSelectChunk != null && chunk != null)
@@ -183,7 +191,7 @@ namespace WolvenKit
                 {
                     try
                     {
-                        var pastedchunk = CR2WCopyAction.CopyChunk(chunk, chunk.CR2WOwner);
+                        var pastedchunk = CR2WCopyAction.CopyChunk(chunk, chunk.cr2w);
                         OnSelectChunk?.Invoke(this, new SelectChunkArgs { Chunk = pastedchunk });
                         MainController.Get().ProjectStatus = "Chunk copied";
                         UpdateList();
@@ -225,35 +233,14 @@ namespace WolvenKit
         
         public void ApplyCustomTheme()
         {
-            var theme = MainController.Get().GetTheme();
-            MainController.Get().ToolStripExtender.SetStyle(toolStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            UIController.Get().ToolStripExtender.SetStyle(toolStrip1, VisualStudioToolStripExtender.VsVersion.Vs2015, UIController.GetTheme());
+            toolStripSearchBox.BackColor = UIController.GetPalette().ToolWindowCaptionButtonInactiveHovered.Background;
 
-            this.treeListView.BackColor = theme.ColorPalette.TabButtonSelectedInactivePressed.Background; 
-            toolStripSearchBox.BackColor = theme.ColorPalette.ToolWindowCaptionButtonInactiveHovered.Background; 
-
-            this.treeListView.ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text;
-            HeaderFormatStyle hfs = new HeaderFormatStyle()
-            {
-                Normal = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.ToolWindowTabSelectedInactive.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                },
-                Hot = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.OverflowButtonHovered.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                },
-                Pressed = new HeaderStateStyle()
-                {
-                    BackColor = theme.ColorPalette.CommandBarToolbarButtonPressed.Background,
-                    ForeColor = theme.ColorPalette.CommandBarMenuDefault.Text,
-                }
-            };
-            this.treeListView.HeaderFormatStyle = hfs;
-            treeListView.UnfocusedSelectedBackColor = theme.ColorPalette.CommandBarToolbarButtonPressed.Background;
+            this.treeListView.BackColor = UIController.GetBackColor();
+            this.treeListView.ForeColor = UIController.GetForeColor();
             
-            
+            this.treeListView.HeaderFormatStyle = UIController.GetHeaderFormatStyle();
+            treeListView.UnfocusedSelectedBackColor = UIController.GetPalette().CommandBarToolbarButtonPressed.Background;
         }
 
         private void showTreetoolStripButton_Click(object sender, EventArgs e)

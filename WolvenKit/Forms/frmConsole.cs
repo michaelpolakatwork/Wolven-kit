@@ -14,13 +14,20 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading.Tasks;
 using CommandLine;
+using WolvenKit.App;
+using System.ComponentModel;
+using WolvenKit.App.ViewModels;
 
 namespace WolvenKit
 {
     public partial class frmConsole : DockContent, IThemedContent
     {
-        private delegate void logDelegate(string t, Logtype type);
+
         private string lastCommand;
+
+        private readonly List<Type> supportedTypes = new List<Type>() { typeof(CUInt64), typeof(CUInt32), typeof(CUInt16), typeof(CUInt8),
+            typeof(CInt64), typeof(CInt32), typeof(CInt16), typeof(CInt8),
+            typeof(CBool), typeof(CString) };
 
         public frmConsole()
         {
@@ -28,18 +35,17 @@ namespace WolvenKit
             ApplyCustomTheme();
         }
 
-
+        private delegate void logDelegate(string t, Logtype type);
         private void AddTextStatic(string text, Logtype type = Logtype.Normal)
         {
             Invoke(new logDelegate(AddText), text, type);
         }
-
         private void AddText(string text, Logtype type = Logtype.Normal)
         {
             switch (type)
             {
                 case Logtype.Error:
-                    txOutput.AppendText(text,Color.Red, false);
+                    txOutput.AppendText(text, Color.Red, false);
                     break;
                 case Logtype.Important:
                     txOutput.AppendText(text, Color.Orange, false);
@@ -75,7 +81,7 @@ namespace WolvenKit
                 sf.Filter = "Text file (.txt) | *.txt";
                 if (sf.ShowDialog() == DialogResult.OK)
                 {
-                    File.WriteAllLines(sf.FileName,txOutput.Lines);
+                    File.WriteAllLines(sf.FileName, txOutput.Lines);
                 }
             }
         }
@@ -84,189 +90,141 @@ namespace WolvenKit
         {
             Clear();
         }
-        
+
         public void ApplyCustomTheme()
         {
-            this.txOutput.BackColor = MainController.Get().GetTheme().ColorPalette.ToolWindowTabSelectedInactive.Background;
-            this.txOutput.ForeColor = MainController.Get().GetTheme().ColorPalette.CommandBarMenuDefault.Text;
+            this.txOutput.BackColor = UIController.GetBackColor();
+            this.txOutput.ForeColor = UIController.GetForeColor();
         }
 
-        private void txOutput_KeyDown(object sender, KeyEventArgs e)
+        private async void txOutput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string line = txOutput.Lines.Last();
                 lastCommand = line;
-                AddText("\r\n", Logtype.Important);
+                AddTextStatic("\r\n", Logtype.Important);
 
                 if (!string.IsNullOrEmpty(line))
                 {
-                    Parse(line.Split(' '));
+                    //await Task.Run(() => Parse(line.Split(' ')));
+                    await Task.Run(() => Parse(line.Split(' ')));
                 }
 
             }
             if (e.KeyCode == Keys.Up)
             {
-                AddText(lastCommand, Logtype.Important);
+                AddTextStatic(lastCommand, Logtype.Important);
             }
         }
 
-        internal async Task Parse(string[] _args)
+        internal async Task /*void*/ Parse(string[] _args)
         {
             using (var sw = new StringWriter())
             {
                 var result = new Parser(config => config.HelpWriter = sw)
-                    .ParseArguments<BulkEditOptions>(_args)
+                    .ParseArguments<ConsoleBulkEditOptions>(_args)
                     .MapResult(
-                        async (BulkEditOptions opts) => await RunBulkEdit(opts),
-                        //errs => 1,
-                        _ => Task.FromResult(1));
+                        async (ConsoleBulkEditOptions opts) => await RunBulkEdit(opts),
+                        _ => Task.FromResult(1) /*1*/);
 
-                AddText(sw.ToString(), Logtype.Important);
+                AddTextStatic(sw.ToString(), Logtype.Important);
             }
         }
 
-
-        private async Task<int> RunBulkEdit(BulkEditOptions opts)
+        private async Task<int> /*int*/ RunBulkEdit(ConsoleBulkEditOptions opts)
         {
-            return await Task.Run(() => RunBulkEdit(opts.ext, opts.chunk, opts.var, opts.type, opts.val));
+            var vm = MockKernel.Get().GetBulkEditorViewModel();
+
+            // Bool, Uint64, Int64, Uint32, Int32, Uint16, Int16, Uint8, Int8
+            BulkEditOptions.AvailableTypes type = BulkEditOptions.AvailableTypes.ANY;
+            if (opts.type == "Bool")
+                type = BulkEditOptions.AvailableTypes.CBool;
+            else if (opts.type == "Uint64")
+                type = BulkEditOptions.AvailableTypes.CUInt64;
+            else if (opts.type == "Int64")
+                type = BulkEditOptions.AvailableTypes.CInt64;
+            else if (opts.type == "Uint32")
+                type = BulkEditOptions.AvailableTypes.CUInt32;
+            else if (opts.type == "Int32")
+                type = BulkEditOptions.AvailableTypes.CInt32;
+            else if (opts.type == "Uint16")
+                type = BulkEditOptions.AvailableTypes.CUInt16;
+            else if (opts.type == "Int16")
+                type = BulkEditOptions.AvailableTypes.CInt16;
+            else if (opts.type == "Uint8")
+                type = BulkEditOptions.AvailableTypes.CUInt8;
+            else if (opts.type == "Int8")
+                type = BulkEditOptions.AvailableTypes.CInt8;
+            else if (opts.type == "String")
+                type = BulkEditOptions.AvailableTypes.CString;
+
+
+            
+
+
+            var _opts = new BulkEditOptions()
+            {
+                Name = opts.varname,
+                Value = opts.val,
+                ChunkName = opts.chunk,
+                Type = type,
+                Extension = opts.ext,
+            };
+            if (opts.exc.Count() != 0)
+                _opts.Exclude = string.Join(",", opts.exc.ToArray());
+            if (opts.inc.Count() != 0)
+                _opts.Include = string.Join(",", opts.inc.ToArray());
+
+            return await Task.Run(() => vm.RunBulkEditInternal(_opts));
         }
 
 
-        private async Task<int> RunBulkEdit(
-           string ext,
-           string chunk,
-           string var,
-           string type,
-           string val)
-        {
 
-            List<string> files = MainController.Get().ActiveMod.Files;
-
-            foreach (var path in files)
-            {
-                var fullpath = Path.Combine(MainController.Get().ActiveMod.FileDirectory, path);
-                if (ext != null && !Path.GetExtension(fullpath).Contains(ext))
-                    continue;
-
-
-                CR2WFile cr2w;
-                using (var fs = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
-                using (var reader = new BinaryReader(fs))
-                {
-                    cr2w = new CR2WFile(reader);
-                    fs.Close();
-                }
-                var task = Task.Run(() => EditVariablesInFile(path, cr2w, chunk, var, type, val));
-                await task.ContinueWith(antecedent =>
-                {
-                    using (var fs = new FileStream(fullpath, FileMode.Open, FileAccess.ReadWrite))
-                    using (var writer = new BinaryWriter(fs))
-                    {
-                        cr2w.Write(writer);
-                    }
-                });
-            }
-
-            return 0;
-        }
-
-        private async Task EditVariablesInFile(string path,
-            CR2WFile file,
-            string chunk,
-            string var,
-            string type,
-            string val
-            )
-        {
-            if (file == null)
-                return;
-            if (chunk != null && !file.chunks.Any(_ => chunk.Contains(_.Type)))
-                return;
-
-            // get chunks that match chunkname
-            List<CR2WExportWrapper> chunks = chunk != null ? file.chunks.Where(_ => chunk.Contains(_.Type)).ToList() : file.chunks;
-
-            foreach (CR2WExportWrapper c in chunks)
-            {
-                EditVariables(c.data);
-            }
-
-            // local 
-            void EditVariables(CVariable vec)
-            {
-                if (vec == null)
-                    return;
-
-                TryEditVariable(vec);
-
-                //check children
-                FieldInfo[] fields = vec.GetType().GetFields();
-                foreach (var f in fields)
-                {
-                    if (f.Name == "cr2w")
-                        continue;
-
-                    var v = f.GetValue(vec);
-                    if (v is IList && v.GetType().IsGenericType)
-                    {
-                        foreach (var listitem in (v as IList))
-                        {
-                            if (listitem is CVariable)
-                                EditVariables(listitem as CVariable);
-                        }
-                    }
-                    if (v is CVariable)
-                    {
-                        TryEditVariable(v as CVariable);
-                        // check if variable has more children
-                        EditVariables(((CVariable)v));
-                    }
-                }
-            }
-
-            void TryEditVariable(CVariable v)
-            {
-                if (v == null)
-                    return;
-                // is a match
-                if (((CVariable)v).Name == var)
-                {
-                    // is not of type
-                    if (type != null && ((CVariable)v).Type != type)
-                    {
-                        return;
-                    }
-                    // edit value
-                    ((CVariable)v).SetValue(val);
-                    AddTextStatic($"Succesfully edited a variable in {path}.\r\n", Logtype.Success);
-                }
-            }
-
-        }
     }
 
-    [Verb("bulkedit", HelpText = "Bulk edit cr2w files.")]
-    class BulkEditOptions
+    [Verb("bulkedit", HelpText = "Bulk edit cr2w files. \n\r" +
+       "Example use: -v 9999 -n autohidedistance -c CMesh -t Uint16 --err=true --exc=0,1029")]
+    class ConsoleBulkEditOptions
     {
+        // Required
+        [Option('n', HelpText = "Specify the variable name. \n\r" +
+            "Example: -n autohidedistance", Required = true)]
+        public string varname { get; set; }
 
-        [Option(HelpText = "Specify the file extension to edit.", Required = false)]
-        public string ext { get; set; }
-
-        [Option(HelpText = "Specify the chunk name.", Required = false)]
-        public string chunk { get; set; }
-
-
-        [Option(HelpText = "Specify the variable name.", Required = true)]
-        public string var { get; set; }
-
-        [Option(HelpText = "Specify the variable type.", Required = false)]
-        public string type { get; set; }
-
-        [Option(HelpText = "Specify the new variable value.", Required = true)]
+        [Option('v', HelpText = "Specify the new variable value. \n\r" +
+            "Example: -v 9999", Required = true)]
         public string val { get; set; }
 
+        // Optional string
+        [Option('e', HelpText = "Specify the file extension to edit. \n\r" +
+            "Example: -e w2mesh", Required = false)]
+        public string ext { get; set; }
 
+        [Option('c', HelpText = "Specify the chunk name. \n\r" +
+            "Example: -c CMesh", Required = false)]
+        public string chunk { get; set; }
+
+        [Option('t', HelpText = "Specify the variable type. \n\r" +
+            "Available types are Bool, Uint64, Int64, Uint32, Int32, Uint16, Int16, Uint8, Int8\n\r" +
+            "Example: -t Uint16"
+            , Required = false)]
+        public string type { get; set; }
+
+        //[Option('o', HelpText = "Specify the option type. Default is replace. This option requires a valid type to be set with -t !!\n\r" +
+        //   "Available types are Multiplication (*), Division (/), Addition (+), Subtraction (-),\n\r" +
+        //    "Example: -o + -t Uint16\n\r" +
+        //    "Example: -o / -t Int32"
+        //   , Required = false)]
+        //public string option { get; set; }
+
+
+        // Optional lists
+        [Option(Separator = ',', HelpText = "Exclude the following values.\n\r" +
+            "Example: --exc=0,64,1028,2053", Required = false)]
+        public IEnumerable<string> exc { get; set; }
+        [Option(Separator = ',', HelpText = "Include only the following values.\n\r" +
+            "Example: --inc=0,32,64", Required = false)]
+        public IEnumerable<string> inc { get; set; }
     }
-
 }

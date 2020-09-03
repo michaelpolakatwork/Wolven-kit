@@ -11,9 +11,10 @@ namespace WolvenKit.FlowTreeEditors
             InitializeComponent();
         }
 
-        public override List<CPtr> GetConnections()
+        /*public override List<CPtr> GetConnections()
         {
             var list = new List<CPtr>();
+
 
             if (Chunk != null)
             {
@@ -49,6 +50,6 @@ namespace WolvenKit.FlowTreeEditors
             }
 
             return list;
-        }
+        }*/
     }
 }

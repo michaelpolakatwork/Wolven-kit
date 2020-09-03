@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using System.IO.MemoryMappedFiles;
 using WolvenKit.Common;
+using WolvenKit.Common.Model;
 
 namespace WolvenKit.Wwise.SoundCache
 {
     public class SoundCacheItem : IWitcherFile
     {
-        public IWitcherArchiveType Bundle { get; set; }
+        public IWitcherArchive Bundle { get; set; }
         /// <summary>
         /// Name of the bundled item in the archive.
         /// </summary>
@@ -18,11 +19,11 @@ namespace WolvenKit.Wwise.SoundCache
 
 
         public long NameOffset;
-        public long PageOFfset { get; set; }
+        public long PageOffset { get; set; }
         public long Size { get; set; }
         public uint ZSize { get; set; }
 
-        public SoundCacheItem(IWitcherArchiveType Parent)
+        public SoundCacheItem(IWitcherArchive Parent)
         {
             this.Bundle = Parent;
         }
@@ -33,20 +34,27 @@ namespace WolvenKit.Wwise.SoundCache
         {
             using (var file = MemoryMappedFile.CreateFromFile(this.ParentFile, FileMode.Open))
             {
-                using (var viewstream = file.CreateViewStream(PageOFfset, Size, MemoryMappedFileAccess.Read))
+                using (var viewstream = file.CreateViewStream(PageOffset, Size, MemoryMappedFileAccess.Read))
                 {
                     viewstream.CopyTo(output);
                 }
             }
         }
 
-        public void Extract(string filename)
+        public string Extract(BundleFileExtractArgs e)
         {
-            using (var output = new FileStream(filename, FileMode.CreateNew, FileAccess.Write))
+            // create new directory and delete existing file
+            Directory.CreateDirectory(Path.GetDirectoryName(e.FileName) ?? "");
+            if (File.Exists(e.FileName))
+                File.Delete(e.FileName);
+
+            using (var output = new FileStream(e.FileName, FileMode.Create, FileAccess.Write))
             {
                 Extract(output);
                 output.Close();
             }
+
+            return e.FileName;
         }
     }
 }

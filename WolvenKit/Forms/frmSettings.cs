@@ -10,11 +10,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using IniParserLTK;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using WolvenKit.App;
+using WolvenKit.App.ViewModels;
+using WolvenKit.Common.Model;
 
 namespace WolvenKit
 {
     public partial class frmSettings : Form
     {
+        private readonly SettingsViewModel viewModel;
+
         public string witcherexe = "";
         public string wccLiteexe = "";
 
@@ -22,34 +28,46 @@ namespace WolvenKit
         public const string wcc_sha256_patched = "275faa214c6263287deea47ddbcd7afcf6c2503a76ff57f2799bc158f5af7c5d";
         public const string wcc_sha256_patched2 = "104f50142fde883337d332d319d205701e8a302197360f5237e6bb426984212a";
 
+
+
         public frmSettings()
         {
+
+
+
             InitializeComponent();
             var config = MainController.Get().Configuration;
+            
             txExecutablePath.Text = config.ExecutablePath;
             txTextLanguage.Text = config.TextLanguage;
             txVoiceLanguage.Text = config.VoiceLanguage;
             txWCC_Lite.Text = config.WccLite;
+
+            checkBoxDisableWelcomeForm.Checked = config.IsWelcomeFormDisabled;
+            
             comboBoxTheme.Items.AddRange(Enum.GetValues(typeof(EColorThemes)).Cast<object>().ToArray());
-            comboBoxTheme.SelectedItem = config.ColorTheme;
-            exeSearcherSlave.RunWorkerAsync();
+            comboBoxTheme.SelectedItem = UIController.Get().Configuration.ColorTheme;
+            
+            comboBoxExtension.Items.AddRange(Enum.GetValues(typeof(EUncookExtension)).Cast<object>().ToArray());
+            comboBoxExtension.SelectedItem = MainController.Get().Configuration.UncookExtension;
+
+            // automatically scan the registry for exe paths for wcc and tw3
+            // if either text field is empty
+            if (string.IsNullOrEmpty(txExecutablePath.Text) || string.IsNullOrEmpty(txWCC_Lite.Text))
+                exeSearcherSlave.RunWorkerAsync();
+
             btSave.Enabled =
                 (File.Exists(txWCC_Lite.Text) && Path.GetExtension(txWCC_Lite.Text) == ".exe" && txWCC_Lite.Text.Contains("wcc_lite.exe")) &&
-                (File.Exists(txExecutablePath.Text) && Path.GetExtension(txExecutablePath.Text) == ".exe" && txExecutablePath.Text.Contains("witcher3.exe"));
+                (File.Exists(txExecutablePath.Text) && Path.GetExtension(txExecutablePath.Text) == ".exe" && txExecutablePath.Text.Contains("witcher3.exe")) &&
+                Directory.Exists(txDepot.Text);
+
+            this.Icon = new Icon(@"Resources\Icons\GUI\Wkit_dark_16x.ico", new Size(16, 16));
 
         }
 
-        private void btnBrowseExe_Click(object sender, EventArgs e)
-        {
-            var dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Title = "Select Witcher 3 Executable.";
-            dlg.FileName = txExecutablePath.Text;
-            dlg.Filter = "witcher3.exe|witcher3.exe";
-            if (dlg.ShowDialog(this) == DialogResult.OK)
-            {
-                txExecutablePath.Text = dlg.FileName;
-            }
-        }
+
+        public event Action RequestApplyTheme;
+
 
         private void btSave_Click(object sender, EventArgs e)
         {
@@ -68,28 +86,51 @@ namespace WolvenKit
                 MessageBox.Show("Invalid wcc_lite.exe path", "failed to save.");
                 return;
             }
+
+            // get configs
             var config = MainController.Get().Configuration;
+            var uiconfig = UIController.Get().Configuration;
 
             // Apply Theme
-            bool applyTheme = config.ColorTheme != (EColorThemes)comboBoxTheme.SelectedItem;
+            bool applyTheme = uiconfig.ColorTheme != (EColorThemes)comboBoxTheme.SelectedItem;
             
-
+            // save settings
             config.ExecutablePath = txExecutablePath.Text;
             config.WccLite = txWCC_Lite.Text;
+
+            // double check that r4depot exists
+            if (string.IsNullOrEmpty(config.DepotPath))
+            {
+                DirectoryInfo wccDir = new FileInfo(txWCC_Lite.Text).Directory.Parent.Parent;
+                string wcc_r4data = Path.Combine(wccDir.FullName, "r4data");
+                if (Directory.Exists(wcc_r4data))
+                {
+                    config.DepotPath = wcc_r4data;
+                }
+            }
+            config.DepotPath = txDepot.Text;
+
             config.TextLanguage = txTextLanguage.Text;
             config.VoiceLanguage = txVoiceLanguage.Text;
-            config.ColorTheme = (EColorThemes)comboBoxTheme.SelectedItem;
+            config.UncookExtension = (EUncookExtension)comboBoxExtension.SelectedItem;
+            config.IsWelcomeFormDisabled = checkBoxDisableWelcomeForm.Checked;
+
+            uiconfig.ColorTheme = (EColorThemes)comboBoxTheme.SelectedItem;
+
+            // save configs
             config.Save();
+            uiconfig.Save();
 
             MainController.Get().UpdateWccHelper(config.WccLite);
 
 
             if (applyTheme)
             {
-                MainController.Get().Window.GlobalApplyTheme();
+                UIController.Get().Window.GlobalApplyTheme();
+                RequestApplyTheme?.Invoke();
             }
                 
-
+            /// debug console enabling
             try
             {
                 IniParser ip = new IniParser(Path.Combine(MainController.Get().Configuration.GameRootDir, "bin\\config\\base\\general.ini"));
@@ -109,6 +150,7 @@ namespace WolvenKit
                 MessageBox.Show(exception.ToString());
             }
 
+            // patch wcc_lite
             try
             {
                 using (var fs = new FileStream(txWCC_Lite.Text, FileMode.Open))
@@ -119,32 +161,34 @@ namespace WolvenKit
                     {
                         case wcc_sha256:
                         {
-                            if (MessageBox.Show(@"wcc_lite is a great tool by CD Projekt red but
-due to some internal problems they didn't really have time to properly develop it.
-Due to this the tool takes an age to start up since it is searching for a CD Projekt red mssql server.
-WolvenKit can patch this with a method figured out by blobbins on the witcher 3 forums.
-Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                            if (MessageBox.Show("wcc_lite is a great tool by CD Projekt red but" +
+                                        "due to some internal problems they didn't really have time to properly develop it, and is very slow " +
+                                        "because it is searching for a CD Projekt red mssql server.\n" +
+                                        "WolvenKit can patch this with a method figured out by blobbins on the witcher 3 forums." +
+                                        "Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                                 DialogResult.Yes)
                             {
                                 //We perform the patch
                                 bw.BaseStream.Seek(0x00713CD0, SeekOrigin.Begin);
                                 bw.Write(new byte[0xDD].Select(x => x = 0x90).ToArray());
-                            }
 
-                            //Recompute hash
-                            fs.Seek(0, SeekOrigin.Begin);
-                            shawcc = SHA256.Create().ComputeHash(fs).Aggregate("", (c, n) => c += n.ToString("x2"));
-                            if (shawcc == wcc_sha256_patched)
-                            {
-                                MessageBox.Show("Succesfully patched!", "Patch completed", MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
+                                //Recompute hash
+                                fs.Seek(0, SeekOrigin.Begin);
+                                shawcc = SHA256.Create().ComputeHash(fs).Aggregate("", (c, n) => c += n.ToString("x2"));
+                                if (shawcc == wcc_sha256_patched)
+                                {
+                                    MessageBox.Show("Succesfully patched!", "Patch completed", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Failed to patch! Please reinstall wcc_lite and try again",
+                                        "Patch completed", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                                }
                             }
-                            else
-                            {
-                                MessageBox.Show("Failed to patch! Please reinstall wcc_lite and try again",
-                                    "Patch completed", MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                            }
+                            
+                            
 
                             break;
                         }
@@ -171,6 +215,8 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
                 //wcc_lite is installed to C:\\Program files
                 MessageBox.Show("Please restart WolvenKit as administrator. Couldn't access " + txWCC_Lite.Text,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Exit with error code 0 so we don't raise a windows error and the user can restart it so we have access to the files.
+                Environment.Exit(0);
             }
             catch (Exception exception)
             {
@@ -179,7 +225,17 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
 
         }
 
-
+        private void btnBrowseExe_Click(object sender, EventArgs e)
+        {
+            var dlg = new System.Windows.Forms.OpenFileDialog();
+            dlg.Title = "Select Witcher 3 Executable.";
+            dlg.FileName = txExecutablePath.Text;
+            dlg.Filter = "witcher3.exe|witcher3.exe";
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                txExecutablePath.Text = dlg.FileName;
+            }
+        }
 
         private void btBrowseWCC_Lite_Click(object sender, EventArgs e)
         {
@@ -195,6 +251,20 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
             }
         }
 
+        private void btBrowseDepot_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dlg = new CommonOpenFileDialog
+            {
+                InitialDirectory = "C:\\Users",
+                IsFolderPicker = true
+            };
+            if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                txDepot.Text = dlg.FileName;
+            }
+        }
+
+        #region Events
         private void exeSearcherSlave_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             const string uninstallkey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\";
@@ -270,6 +340,24 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
             {
                 txWCC_Lite.Text = wccLiteexe;
             }
+
+
+            // get the depot path
+            // if depot path is empty, get the r4data from wcc_lite
+            var config = MainController.Get().Configuration;
+            if (string.IsNullOrEmpty(config.DepotPath) || !Directory.Exists(config.DepotPath))
+            {
+                if (File.Exists(txWCC_Lite.Text) && Path.GetExtension(txWCC_Lite.Text) == ".exe" && txWCC_Lite.Text.Contains("wcc_lite.exe"))
+                {
+                    DirectoryInfo wccDir = new FileInfo(txWCC_Lite.Text).Directory.Parent.Parent;
+                    string wcc_r4data = Path.Combine(wccDir.FullName, "r4data");
+                    if (Directory.Exists(wcc_r4data))
+                    {
+                        config.DepotPath = wcc_r4data;
+                    }
+                }
+            }
+            txDepot.Text = config.DepotPath;
         }
 
         private void exeSearcherSlave_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -296,6 +384,21 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
             btSave.Enabled =
                 (File.Exists(txWCC_Lite.Text) && Path.GetExtension(txWCC_Lite.Text) == ".exe" && txWCC_Lite.Text.Contains("wcc_lite.exe")) &&
                 (File.Exists(txExecutablePath.Text) && Path.GetExtension(txExecutablePath.Text) == ".exe" && txExecutablePath.Text.Contains("witcher3.exe"));
+
+
+            // get the depot path
+            var config = MainController.Get().Configuration;
+            if (File.Exists(txWCC_Lite.Text) && Path.GetExtension(txWCC_Lite.Text) == ".exe" && txWCC_Lite.Text.Contains("wcc_lite.exe"))
+            {
+                DirectoryInfo wccDir = new FileInfo(txWCC_Lite.Text).Directory.Parent.Parent;
+                string wcc_r4data = Path.Combine(wccDir.FullName, "r4data");
+                if (Directory.Exists(wcc_r4data))
+                {
+                    config.DepotPath = wcc_r4data;
+                }
+            }
+            txDepot.Text = config.DepotPath;
+
         }
 
         private void txExecutablePath_TextChanged(object sender, EventArgs e)
@@ -315,5 +418,6 @@ Would you like to perform this patch?", "wcc_lite faster patch", MessageBoxButto
                 (File.Exists(txWCC_Lite.Text) && Path.GetExtension(txWCC_Lite.Text) == ".exe" && txWCC_Lite.Text.Contains("wcc_lite.exe")) &&
                 (File.Exists(txExecutablePath.Text) && Path.GetExtension(txExecutablePath.Text) == ".exe" && txExecutablePath.Text.Contains("witcher3.exe"));
         }
+        #endregion
     }
 }
