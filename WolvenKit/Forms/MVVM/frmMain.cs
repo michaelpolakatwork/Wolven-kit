@@ -35,6 +35,7 @@ namespace WolvenKit
     using System.Web.UI.Design;
     using WolvenKit.App;
     using WolvenKit.App.ViewModels;
+    using WolvenKit.App.ViewModels.Documents;
     using WolvenKit.Bundles;
     using WolvenKit.Common.Extensions;
     using WolvenKit.Common.Model;

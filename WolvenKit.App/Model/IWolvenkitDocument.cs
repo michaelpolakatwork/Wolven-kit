@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Documents;
 
 namespace WolvenKit.Common.Model
 {

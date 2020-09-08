@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Catel.Data;
+using System.Collections.Generic;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Tools;
 using WolvenKit.Common;
 
 namespace WolvenKit.App

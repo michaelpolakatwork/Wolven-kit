@@ -12,6 +12,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using WolvenKit.App;
 using WolvenKit.App.Commands;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Tools;
 using WolvenKit.Common.Services;
 using WolvenKit.Extensions;
 using WolvenKit.Services;

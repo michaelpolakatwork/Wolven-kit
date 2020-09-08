@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -37,8 +38,9 @@ namespace WolvenKit.App
             {
                 if (_configuration != value)
                 {
+                    var oldValue = _configuration;
                     _configuration = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Configuration, oldValue, value);
                 }
             }
         }

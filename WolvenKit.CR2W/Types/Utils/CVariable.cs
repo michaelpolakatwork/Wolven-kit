@@ -1,4 +1,5 @@
-﻿using DotNetHelper.FastMember.Extension.Extension;
+﻿using Catel.Data;
+using DotNetHelper.FastMember.Extension.Extension;
 using FastMember;
 using System;
 using System.CodeDom;

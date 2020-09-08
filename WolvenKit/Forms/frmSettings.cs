@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WolvenKit.App;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Tools;
 using WolvenKit.Common.Model;
 
 namespace WolvenKit

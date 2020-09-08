@@ -25,6 +25,7 @@ namespace WolvenKit
     using WolvenKit.App;
     using WolvenKit.App.Commands;
     using WolvenKit.App.ViewModels;
+    using WolvenKit.App.ViewModels.Tools;
     using WolvenKit.Common.Extensions;
     using WolvenKit.Common.Model;
     using WolvenKit.CR2W;

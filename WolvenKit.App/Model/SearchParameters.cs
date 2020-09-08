@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,7 +11,7 @@ using WolvenKit.Common;
 
 namespace WolvenKit.App.Model
 {
-    public class SearchParameters : ObservableObject, INotifyPropertyChanged, INotifyPropertyChanging
+    public class SearchParameters : ObservableObject
     {
 
 
@@ -35,7 +36,7 @@ namespace WolvenKit.App.Model
                 if (_searchText != value)
                 {
                     _searchText = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -50,7 +51,7 @@ namespace WolvenKit.App.Model
                 if (_searchBundleText != value)
                 {
                     _searchBundleText = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -65,7 +66,7 @@ namespace WolvenKit.App.Model
                 if (_searchTypeText != value)
                 {
                     _searchTypeText = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -80,7 +81,7 @@ namespace WolvenKit.App.Model
                 if (_isRegex != value)
                 {
                     _isRegex = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -95,7 +96,7 @@ namespace WolvenKit.App.Model
                 if (_isWholeWord != value)
                 {
                     _isWholeWord = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -110,7 +111,7 @@ namespace WolvenKit.App.Model
                 if (_isMatchCase != value)
                 {
                     _isMatchCase = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -125,7 +126,7 @@ namespace WolvenKit.App.Model
                 if (_isCurrentFolder != value)
                 {
                     _isCurrentFolder = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -140,7 +141,7 @@ namespace WolvenKit.App.Model
                 if (_isRoot != value)
                 {
                     _isRoot = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }
@@ -155,7 +156,7 @@ namespace WolvenKit.App.Model
                 if (_isAllSubfolders != value)
                 {
                     _isAllSubfolders = value;
-                    OnPropertyChanged("SearchParams");
+                    RaisePropertyChanged("SearchParams");
                 }
             }
         }

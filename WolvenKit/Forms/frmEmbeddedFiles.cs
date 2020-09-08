@@ -7,6 +7,7 @@ using System.Linq;
 using WolvenKit.App.Model;
 using System.Windows.Controls;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Documents;
 
 namespace WolvenKit
 {

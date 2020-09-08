@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Documents;
 using WolvenKit.CR2W;
 
 namespace WolvenKit

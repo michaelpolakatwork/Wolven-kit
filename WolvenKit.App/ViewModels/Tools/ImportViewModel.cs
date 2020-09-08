@@ -12,7 +12,7 @@ using WolvenKit.App.Model;
 using WolvenKit.Common.Services;
 using WolvenKit.Common.Wcc;
 
-namespace WolvenKit.App.ViewModels
+namespace WolvenKit.App.ViewModels.Tools
 {
     public class ImportViewModel : ViewModel
     {
@@ -44,7 +44,7 @@ namespace WolvenKit.App.ViewModels
         private DirectoryInfo importdepot;
         #endregion
 
-        void Importableobjects_ListChanged(object sender, ListChangedEventArgs e) => OnPropertyChanged(nameof(Importableobjects));
+        void Importableobjects_ListChanged(object sender, ListChangedEventArgs e) => RaisePropertyChanged(nameof(Importableobjects));
 
         #region Properties
         #region SelectedItem
@@ -56,8 +56,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_importableobjects != value)
                 {
+                    var oldValue = _importableobjects;
                     _importableobjects = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Importableobjects, oldValue, value);
                 }
             }
         }
@@ -138,15 +139,15 @@ namespace WolvenKit.App.ViewModels
                             ETextureGroup etxtgroup = (ETextureGroup)Enum.Parse(typeof(ETextureGroup), stxtgroup);
                             importable.TextureGroup = etxtgroup;
 
-                            importable.SetState(ImportableFile.EObjectState.Ready);
+                            importable.State = ImportableFile.EObjectState.Ready;
                             importable.IsSelected = true;
                         }
                         else
-                            importable.SetState(ImportableFile.EObjectState.NoTextureGroup);
+                            importable.State = (ImportableFile.EObjectState.NoTextureGroup);
                     }
                     catch (Exception)
                     {
-                        importable.SetState(ImportableFile.EObjectState.Error);
+                        importable.State = (ImportableFile.EObjectState.Error);
                     }
                 }
             }
@@ -160,7 +161,7 @@ namespace WolvenKit.App.ViewModels
 
             foreach (var file in filesToImport)
             {
-                if (file.GetState() != ImportableFile.EObjectState.Ready)
+                if (file.State != ImportableFile.EObjectState.Ready)
                     continue;
 
                 var fullpath = Path.Combine(importdepot.FullName, file.GetRelativePath());
@@ -239,7 +240,7 @@ namespace WolvenKit.App.ViewModels
                     importableobj.GetImportableType() == EImportable.nxs
                     )
                 {
-                    importableobj.SetState(ImportableFile.EObjectState.Ready);
+                    importableobj.State = (ImportableFile.EObjectState.Ready);
                     importableobj.IsSelected = true;
                 }
 

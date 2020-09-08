@@ -24,6 +24,7 @@ namespace WolvenKit
     using WolvenKit.App.Model;
     using WolvenKit.App.ViewModels;
     using BrightIdeasSoftware;
+    using WolvenKit.App.ViewModels.Documents;
 
     public enum EColorThemes
     {

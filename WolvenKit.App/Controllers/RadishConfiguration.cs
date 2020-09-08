@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -48,7 +49,7 @@ namespace WolvenKit.App
                 {
                     _oldmodname = _modname;
                     _modname = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => modname, _oldmodname, value);
                 }
             }
         }
@@ -62,8 +63,9 @@ namespace WolvenKit.App
             {
                 if (_idspace != value)
                 {
+                    var oldValue = _idspace;
                     _idspace = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => idspace, oldValue, value);
                 }
             }
         }
@@ -77,8 +79,9 @@ namespace WolvenKit.App
             {
                 if (_DIR_ENCODER != value)
                 {
+                    var oldValue = _DIR_ENCODER;
                     _DIR_ENCODER = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => DIR_ENCODER, oldValue, value);
                 }
             }
         }
@@ -92,8 +95,9 @@ namespace WolvenKit.App
             {
                 if (_DIR_MODKIT != value)
                 {
+                    var oldValue = _DIR_MODKIT;
                     _DIR_MODKIT = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => DIR_MODKIT, oldValue, value);
                 }
             }
         }
@@ -107,8 +111,9 @@ namespace WolvenKit.App
             {
                 if (_DIR_W3 != value)
                 {
+                    var oldValue = _DIR_W3;
                     _DIR_W3 = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => DIR_W3, oldValue, value);
                 }
             }
         }

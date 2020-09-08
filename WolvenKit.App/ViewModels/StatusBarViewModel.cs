@@ -1,4 +1,4 @@
-﻿namespace WolvenKit.UI.ViewModels
+﻿namespace WolvenKit.App.ViewModels
 {
     using Catel.MVVM;
 

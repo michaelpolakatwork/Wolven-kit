@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,8 +39,9 @@ namespace WolvenKit.App.Model
             {
                 if (_isSelected != value)
                 {
+                    var oldValue = _isSelected;
                     _isSelected = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => IsSelected, oldValue, value);
                 }
             }
         }
@@ -56,8 +58,9 @@ namespace WolvenKit.App.Model
             {
                 if (_textureGroup != value)
                 {
+                    var oldValue = _textureGroup;
                     _textureGroup = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => TextureGroup, oldValue, value);
                 }
             }
         }
@@ -72,8 +75,9 @@ namespace WolvenKit.App.Model
             {
                 if (_importType != value)
                 {
+                    var oldValue = _importType;
                     _importType = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => ImportType, oldValue, value);
                 }
             }
         }
@@ -83,19 +87,36 @@ namespace WolvenKit.App.Model
         private readonly string _relativePath;
         
         private readonly EImportable _type;
-        private EObjectState _state;
 
         public string GetRelativePath() => _relativePath;
         public EImportable GetImportableType() => _type;
-        public EObjectState GetState() => _state;
-        public void SetState(EObjectState value)
+
+        private EObjectState _state;
+        public EObjectState State
         {
-            if (_state != value)
+            get => _state;
+            set
             {
-                _state = value;
-                OnPropertyChanged();
+                if (_state != value)
+                {
+                    var oldValue = _state;
+                    _state = value;
+                    RaisePropertyChanged(() => State, oldValue, value);
+                }
             }
         }
+
+
+        //public EObjectState GetState() => _state;
+        //public void SetState(EObjectState value)
+        //{
+        //    if (_state != value)
+        //    {
+        //        var oldValue = _state;
+        //        _state = value;
+        //        RaisePropertyChanged(() => SetState, oldValue, value);
+        //    }
+        //}
 
         public ImportableFile(string path, EImportable type, Enum importtype)
         {

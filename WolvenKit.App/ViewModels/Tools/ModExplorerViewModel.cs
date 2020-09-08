@@ -15,7 +15,7 @@ using WolvenKit.Common.Services;
 using WolvenKit.Common.Wcc;
 using WolvenKit.CR2W;
 
-namespace WolvenKit.App.ViewModels
+namespace WolvenKit.App.ViewModels.Tools
 {
     public class ModExplorerViewModel : ViewModel
     {
@@ -45,7 +45,7 @@ namespace WolvenKit.App.ViewModels
         #region Fields
         void Treenodes_ListChanged(object sender, ListChangedEventArgs e)
         {
-            OnPropertyChanged(nameof(treenodes));
+            RaisePropertyChanged(nameof(treenodes));
         }
 
 
@@ -72,8 +72,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_treenodes != value)
                 {
+                    var oldValue = _treenodes;
                     _treenodes = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => treenodes, oldValue, value);
                 }
             }
         }
@@ -87,8 +88,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_selectedItems != value)
                 {
+                    var oldValue = _selectedItems;
                     _selectedItems = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => SelectedItems, oldValue, value);
                 }
             }
         }

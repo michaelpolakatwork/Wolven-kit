@@ -1,4 +1,5 @@
-﻿using SymbolicLinkSupport;
+﻿using Catel.Data;
+using SymbolicLinkSupport;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,6 +17,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using WolvenKit.App;
 using WolvenKit.App.Commands;
+using WolvenKit.App.ViewModels.Documents;
 using WolvenKit.Cache;
 using WolvenKit.Common;
 using WolvenKit.Common.Extensions;
@@ -34,36 +36,14 @@ namespace WolvenKit.App.ViewModels
     public class MainViewModel : ViewModel
     {
         #region Properties
-        #region Title
-        private string _title;
-        public virtual string Title
-        {
-            get => _title;
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        #endregion
 
-        #region Open Documents
-        private ObservableCollection<DocumentViewModel> _openDocuments;
+        #region File
         public ObservableCollection<DocumentViewModel> OpenDocuments
         {
-            get => _openDocuments;
-            set
-            {
-                if (_openDocuments != value)
-                {
-                    _openDocuments = value;
-                    OnPropertyChanged();
-                }
-            }
+            get => GetValue<ObservableCollection<DocumentViewModel>>(OpenDocumentsProperty);
+            set => SetValue(OpenDocumentsProperty, value);
         }
+        public static readonly PropertyData OpenDocumentsProperty = RegisterProperty(nameof(File), typeof(ObservableCollection<DocumentViewModel>));
         #endregion
 
         //#region Active Document

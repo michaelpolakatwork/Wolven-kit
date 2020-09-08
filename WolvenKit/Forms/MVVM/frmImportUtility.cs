@@ -11,6 +11,7 @@ using WolvenKit.App;
 using WolvenKit.App.Commands;
 using WolvenKit.App.Model;
 using WolvenKit.App.ViewModels;
+using WolvenKit.App.ViewModels.Tools;
 using WolvenKit.Common.Wcc;
 using WolvenKit.Services;
 
@@ -86,7 +87,7 @@ namespace WolvenKit.Forms
         private void objectListView_FormatRow(object sender, FormatRowEventArgs e)
         {
             ImportableFile importable = (ImportableFile)e.Model;
-            switch (importable.GetState())
+            switch (importable.State)
             {
                 case ImportableFile.EObjectState.NoTextureGroup:
                     e.Item.BackColor = Color.LightSalmon;
@@ -110,7 +111,7 @@ namespace WolvenKit.Forms
                 ETextureGroup textureGroup = (ETextureGroup)e.NewValue;
                 if (textureGroup != ETextureGroup.None)
                 {
-                    (e.RowObject as ImportableFile).SetState(ImportableFile.EObjectState.Ready);
+                    (e.RowObject as ImportableFile).State = (ImportableFile.EObjectState.Ready);
                 }
             }
         }

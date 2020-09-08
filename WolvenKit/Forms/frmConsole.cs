@@ -18,6 +18,7 @@ using WolvenKit.App;
 using System.ComponentModel;
 using WolvenKit.App.ViewModels;
 using WolvenKit.App.Commands;
+using WolvenKit.App.ViewModels.Tools;
 
 namespace WolvenKit
 {

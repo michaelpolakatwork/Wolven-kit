@@ -1,4 +1,5 @@
-﻿using FastMember;
+﻿using Catel.Data;
+using FastMember;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ using WolvenKit.CR2W;
 using WolvenKit.CR2W.Types;
 using WolvenKit.Radish.Model;
 
-namespace WolvenKit.App.ViewModels
+namespace WolvenKit.App.ViewModels.Tools
 {
     public class BulkEditOptions
     {
@@ -98,8 +99,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_min != value)
                 {
+                    var oldValue = _min;
                     _min = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Min, oldValue, value);
                 }
             }
         }
@@ -113,8 +115,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_max != value)
                 {
+                    var oldValue = _max;
                     _max = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Max, oldValue, value);
                 }
             }
         }
@@ -128,8 +131,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_value != value)
                 {
+                    var oldValue = _value;
                     _value = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Value, oldValue, value);
                 }
             }
         }
@@ -187,7 +191,7 @@ namespace WolvenKit.App.ViewModels
                 if (_progressReport != value)
                 {
                     _progressReport = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(new AdvancedPropertyChangedEventArgs(this, nameof(ProgressReport)));
                 }
             }
         }

@@ -15,7 +15,7 @@ using WolvenKit.Common;
 using WolvenKit.Common.Services;
 using WolvenKit.Radish.Model;
 
-namespace WolvenKit.App.ViewModels
+namespace WolvenKit.App.ViewModels.Tools
 {
     public class RadishViewModel : ViewModel
     {
@@ -158,8 +158,9 @@ namespace WolvenKit.App.ViewModels
             {
                 if (_currentWorkflow != value)
                 {
+                    var oldValue = _currentWorkflow;
                     _currentWorkflow = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => CurrentWorkflow, oldValue, value);
                 }
             }
         }

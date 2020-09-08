@@ -11,6 +11,7 @@ namespace WolvenKit.App
 {
     using Bundles;
     using Cache;
+    using Catel.Data;
     using Common;
     using Common.Services;
     using CR2W;
@@ -539,7 +540,7 @@ namespace WolvenKit.App
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
-            OnPropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName);
             return true;
         }
         #endregion

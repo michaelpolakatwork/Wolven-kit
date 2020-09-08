@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -38,8 +39,9 @@ namespace WolvenKit.Common.Services
             {
                 if (_log != value)
                 {
+                    var oldValue = _log;
                     _log = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Log, oldValue, value);
                 }
             }
         }
@@ -53,8 +55,9 @@ namespace WolvenKit.Common.Services
             {
                 if (_progress != value)
                 {
+                    var oldValue = _progress;
                     _progress = value;
-                    OnPropertyChanged();
+                    RaisePropertyChanged(() => Progress, oldValue, value);
                 }
             }
         }

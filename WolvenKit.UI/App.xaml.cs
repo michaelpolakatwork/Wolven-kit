@@ -1,13 +1,16 @@
 ﻿namespace WolvenKit.UI
 {
     using System.Windows;
-
+    using WolvenKit.App;
     using Catel.IoC;
     using Catel.Logging;
+    using Catel.MVVM;
     using Catel.Reflection;
     using Catel.Windows;
     using Orchestra.Services;
     using Orchestra.Views;
+    using WolvenKit.UI.Views;
+    using WolvenKit.App.ViewModels;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -38,11 +41,15 @@
             //var serviceLocator = ServiceLocator.Default;
             //serviceLocator.RegisterType<IMyInterface, IMyClass>();
 
+            var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
+            viewModelLocator.NamingConventions.Add("WolvenKit.App.ViewModels.[VW]ViewModel");
+
+            viewModelLocator.Register(typeof(MainView), typeof(MainViewModel));
+
             // To auto-forward styles, check out Orchestra (see https://github.com/wildgums/orchestra)
             // StyleHelper.CreateStyleForwardersForDefaultStyles();
 
-            var serviceLocator = ServiceLocator.Default;
-            var shellService = serviceLocator.ResolveType<IShellService>();
+            var shellService = ServiceLocator.Default.ResolveType<IShellService>();
             shellService.CreateAsync<ShellWindow>();
 
             Log.Info("Calling base.OnStartup");

@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolvenKit.Console", "Wolven
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolvenKit.App", "WolvenKit.App\WolvenKit.App.csproj", "{6C5EE693-7F88-4259-90D5-9B247E61A15A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolvenKit.UI", "WolvenKit.UI\WolvenKit.UI.csproj", "{13059317-C1F2-44A2-BE20-3D7C7D322EBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolvenKit.UI", "WolvenKit.UI\WolvenKit.UI.csproj", "{13059317-C1F2-44A2-BE20-3D7C7D322EBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -378,8 +378,8 @@ Global
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug Unity|x86.Build.0 = Debug|Any CPU
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x64.Build.0 = Debug|Any CPU
+		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x64.ActiveCfg = Debug|x64
+		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x64.Build.0 = Debug|x64
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Debug|x86.Build.0 = Debug|Any CPU
 		{13059317-C1F2-44A2-BE20-3D7C7D322EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU

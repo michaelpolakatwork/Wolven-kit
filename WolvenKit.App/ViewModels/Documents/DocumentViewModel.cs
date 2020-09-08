@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Catel.Data;
+using System;
 using System.IO;
 using System.Windows.Input;
 using WolvenKit.App.Commands;
 using WolvenKit.App.Model;
-using WolvenKit.Common.Model;
+using WolvenKit.Common.Model;
+
 using WolvenKit.CR2W;
-using WolvenKit.CR2W.SRT;
+using WolvenKit.CR2W.SRT;
+
 using WolvenKit.Radish.Model;
 
-namespace WolvenKit.App.ViewModels
+namespace WolvenKit.App.ViewModels.Documents
 {
     public class DocumentViewModel : CloseableViewModel
     {
@@ -26,40 +29,36 @@ namespace WolvenKit.App.ViewModels
 
         #region Properties
         public object SaveTarget { get; set; }
+
         #region File
-        private IWolvenkitFile _file;
         public IWolvenkitFile File
         {
-            get => _file;
-            set
-            {
-                if (_file != value)
-                {
-                    _file = value;
-                    OnPropertyChanged();
-                }
-            }
+            get => GetValue<IWolvenkitFile>(FileProperty);
+            set => SetValue(FileProperty, value);
         }
+        public static readonly PropertyData FileProperty = RegisterProperty(nameof(File), typeof(IWolvenkitFile));
         #endregion
+
+
+
         #region FileName
         public virtual string FileName => File.FileName;
         #endregion
+
         #region FormText
-        private string _formText;
         public string FormText
         {
-            get => _formText;
-            set
-            {
-                if (_formText != value)
-                {
-                    _formText = value;
-                    OnPropertyChanged();
-                }
-            }
+            get => GetValue<string>(FormTextProperty);
+            set => SetValue(FormTextProperty, value);
         }
+        public static readonly PropertyData FormTextProperty = RegisterProperty(nameof(FormText), typeof(string));
         #endregion
-        public string Title => Path.GetFileName(FileName);
+
+        /// <summary>
+        /// Gets the title of the view model.
+        /// </summary>
+        /// <value>The title.</value>
+        public override string Title { get { return "Just acknowledge"; } }
 
         #endregion
 
@@ -149,22 +148,38 @@ namespace WolvenKit.App.ViewModels
             using (var reader = new BinaryReader(stream))
             {
                 // switch between cr2wfiles and others (e.g. srt)
-                if (Path.GetExtension(filename) == ".srt")
-                {
-                    File = new Srtfile()
-                    {
-                        FileName = filename
-                    };
-                    File.Read(reader);
-                }
-                else
-                {
-                    File = new CR2WFile(reader, MainController.Get().Logger)
-                    {
-                        FileName = filename,
-                        EditorController = variableEditor/*UIController.Get()*/,
-                        LocalizedStringSource = MainController.Get()
-                    };
+                if (Path.GetExtension(filename) == ".srt")
+
+                {
+
+                    File = new Srtfile()
+
+                    {
+
+                        FileName = filename
+
+                    };
+
+                    File.Read(reader);
+
+                }
+
+                else
+
+                {
+
+                    File = new CR2WFile(reader, MainController.Get().Logger)
+
+                    {
+
+                        FileName = filename,
+
+                        EditorController = variableEditor/*UIController.Get()*/,
+
+                        LocalizedStringSource = MainController.Get()
+
+                    };
+
                 }
             }
         }
