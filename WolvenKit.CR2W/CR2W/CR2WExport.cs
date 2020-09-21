@@ -75,11 +75,11 @@ namespace WolvenKit.CR2W
             {
                 objectFlags = 8192,
             };
-            IsVirtuallyMounted = false;
-            Referrers = new List<CVariable>();
 
+            Referrers = new List<CVariable>();
             this.REDType = redtype;
             SetParentChunk(parentchunk);
+            _virtualParentChunkIndex = -1;
 
             CreateDefaultData();
         }
@@ -95,8 +95,8 @@ namespace WolvenKit.CR2W
             _export = export;
 
             REDType = cr2w.names[export.className].Str;
-            IsVirtuallyMounted = false;
             Referrers = new List<CVariable>();
+            _virtualParentChunkIndex = -1;
         }
         #endregion
 
@@ -126,24 +126,21 @@ namespace WolvenKit.CR2W
         private void SetParentChunk(CR2WExportWrapper parent)
         {
             ParentChunkIndex = cr2w.chunks.IndexOf(parent);
-            IsVirtuallyMounted = false;
-            VirtualParentChunkIndex = ParentChunkIndex;
         }
 
-        public bool IsVirtuallyMounted { get; set; }
         private int _virtualParentChunkIndex;
         public int VirtualParentChunkIndex
         {
-            get => IsVirtuallyMounted ? _virtualParentChunkIndex : ParentChunkIndex;
+            get => _virtualParentChunkIndex>-1 ? _virtualParentChunkIndex : ParentChunkIndex;
             set
             {
-                if (IsVirtuallyMounted) return;
+                if (_virtualParentChunkIndex > -1) return;
                 _virtualParentChunkIndex = value;
-                IsVirtuallyMounted = true;
             }
         }
 
         /// <summary>
+        /// With a chunk as a directed graph vertex, this is the vertex in-edge list.
         /// Reverse lookup : CVariables, being CPtr or CHandle, which reference this chunk.
         /// Beware, in case of multithreading, this needs locking!
         /// </summary>
@@ -226,7 +223,7 @@ namespace WolvenKit.CR2W
 
         public CR2WExportWrapper GetVirtualParentChunk()
         {
-            if (IsVirtuallyMounted && VirtualParentChunkIndex != -1)
+            if (VirtualParentChunkIndex > -1)
             {
                 return cr2w.chunks[VirtualParentChunkIndex];
             }
@@ -263,7 +260,7 @@ namespace WolvenKit.CR2W
 
             //TODO explain next two lines
             data.VarChunkIndex = ChunkIndex;
-            VirtualParentChunkIndex = ParentChunkIndex;
+            //VirtualParentChunkIndex = ParentChunkIndex;
 
             data.Read(file, _export.dataSize);
 

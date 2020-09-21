@@ -55,35 +55,26 @@ namespace WolvenKit.CR2W.Types
 
         private void SetValueInternal(int val)
         {
-            try
-            {
-                Reference = val == 0 ? null : cr2w.chunks[val - 1];
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidPtrException(ex.Message);
-            }
+            Reference = val == 0 ? null : cr2w.chunks[val - 1];
 
             // Try reparenting on virtual mountpoint
             if (Reference != null)
             {
                 Reference.Referrers.Add(this); //Populate the reverse-lookup
 
-                if (!Reference.IsVirtuallyMounted)
+                if (/*cr2w.chunks[this.GetVarChunkIndex()].data.REDName == "CEntity" && this.ParentVar.REDName == "Components"*/false)
                 {
-                    Reference.VirtualParentChunkIndex = GetVarChunkIndex();
+                    return;
                 }
-                else switch (REDName)
-                {
-                    case "parent" when !cr2w.chunks[GetVarChunkIndex()].IsVirtuallyMounted:
+
+                Reference.VirtualParentChunkIndex = GetVarChunkIndex();
+
+/*                    case "parent" when !cr2w.chunks[GetVarChunkIndex()].IsVirtuallyMounted:
                         cr2w.chunks[GetVarChunkIndex()].VirtualParentChunkIndex = Reference.ChunkIndex;
-                        break;
-                    case "child" when Reference.IsVirtuallyMounted:
-                        //remount, needed for chardattachment
-                        Reference.IsVirtuallyMounted = false;
-                        Reference.VirtualParentChunkIndex = GetVarChunkIndex();
-                        break;
-                }
+                        case "child" when Reference.IsVirtuallyMounted:
+                            Reference.IsVirtuallyMounted = false;
+                            Reference.VirtualParentChunkIndex = GetVarChunkIndex();
+                            break;*/
             }
         }
 

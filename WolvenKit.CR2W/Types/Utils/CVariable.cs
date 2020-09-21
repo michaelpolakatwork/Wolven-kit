@@ -168,7 +168,7 @@ namespace WolvenKit.CR2W.Types
             return _nam;
         }
 
-        protected int GetVarChunkIndex()
+        public int GetVarChunkIndex()
         {
             var currentcvar = this as IEditableVariable;
             while (currentcvar.VarChunkIndex == -1)
