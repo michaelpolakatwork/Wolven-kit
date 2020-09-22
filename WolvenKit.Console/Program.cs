@@ -67,15 +67,15 @@ namespace WolvenKit.Console
                 DumpMetadataStoreOptions,
                 CR2WToPostgresOptions>(_args)
                         .MapResult(
-                          async (CacheOptions opts) => await new Task<int>(() => DumpCache(opts)),
-                          async (BundleOptions opts) => await new Task<int>(() => RunBundle(opts)),
-                          async (DumpCookedEffectsOptions opts) => await new Task<int>(() => DumpCookedEffects(opts)),
-                          async (DumpXbmsOptions opts) => await new Task<int>(() => DumpXbmInfo(opts)),
-                          async (DumpDDSOptions opts) => await new Task<int>(() => DumpDDSInfo(opts)),
-                          async (DumpArchivedFileInfosOptions opts) => await new Task<int>(() => DumpArchivedFileInfos(opts)),
-                          async (DumpMetadataStoreOptions opts) => await new Task<int>(() => DumpMetadataStore(opts)),
-                          async (DumpCollisionOptions opts) => await new Task<int>(() => DumpCollision(opts)),
-                          async (CR2WToPostgresOptions opts) => await new Task<int>(() => CR2WToPostgres(opts)),
+                          async (CacheOptions opts) => await DumpCache(opts),
+                          async (BundleOptions opts) => await RunBundle(opts),
+                          async (DumpCookedEffectsOptions opts) => await DumpCookedEffects(opts),
+                          async (DumpXbmsOptions opts) => await DumpXbmInfo(opts),
+                          async (DumpDDSOptions opts) => await DumpDDSInfo(opts),
+                          async (DumpArchivedFileInfosOptions opts) => await DumpArchivedFileInfos(opts),
+                          async (DumpMetadataStoreOptions opts) => await DumpMetadataStore(opts),
+                          async (DumpCollisionOptions opts) => await DumpCollision(opts),
+                          async (CR2WToPostgresOptions opts) => await CR2WToPostgres(opts),
                           //errs => 1,
                           _ => Task.FromResult(1));
             return result;
@@ -91,7 +91,7 @@ namespace WolvenKit.Console
             public string TextureGroup { get; set; }
         }
 
-        private static int DumpCookedEffects(DumpCookedEffectsOptions options)
+        private static async Task<int> DumpCookedEffects(DumpCookedEffectsOptions options)
         {
             var dt = DateTime.Now;
             string idx = RED.CRC32.Crc32Algorithm.Compute(Encoding.ASCII.GetBytes($"{dt.Year}{dt.Month}{dt.Day}{dt.Hour}{dt.Minute}{dt.Second}")).ToString();
@@ -194,7 +194,7 @@ namespace WolvenKit.Console
             return 1;
         }
 
-        private static int DumpCollision(DumpCollisionOptions options)
+        private static async Task<int> DumpCollision(DumpCollisionOptions options)
         {
             var dt = DateTime.Now;
             string idx = RED.CRC32.Crc32Algorithm.Compute(Encoding.ASCII.GetBytes($"{dt.Year}{dt.Month}{dt.Day}{dt.Hour}{dt.Minute}{dt.Second}")).ToString();
@@ -306,7 +306,7 @@ namespace WolvenKit.Console
             return 1;
         }
 
-        private static int DumpDDSInfo(DumpDDSOptions options)
+        private static async Task<int> DumpDDSInfo(DumpDDSOptions options)
         {
             var dt = DateTime.Now;
             string idx = RED.CRC32.Crc32Algorithm.Compute(Encoding.ASCII.GetBytes($"{dt.Year}{dt.Month}{dt.Day}{dt.Hour}{dt.Minute}{dt.Second}")).ToString();
@@ -480,7 +480,7 @@ namespace WolvenKit.Console
             return 1;
         }
 
-        private static int DumpXbmInfo(DumpXbmsOptions options)
+        private static async Task<int> DumpXbmInfo(DumpXbmsOptions options)
         {
             var dt = DateTime.Now;
             string idx = RED.CRC32.Crc32Algorithm.Compute(Encoding.ASCII.GetBytes($"{dt.Year}{dt.Month}{dt.Day}{dt.Hour}{dt.Minute}{dt.Second}")).ToString();
@@ -559,7 +559,7 @@ namespace WolvenKit.Console
             return 1;
         }
 
-        private static int DumpCache(CacheOptions options)
+        private static async Task<int> DumpCache(CacheOptions options)
         {
             bool WHITELIST = true;
             var whitelistExt = new[]
@@ -691,7 +691,7 @@ namespace WolvenKit.Console
             return 1;
         }
 
-        private static int DumpArchivedFileInfos(DumpArchivedFileInfosOptions options)
+        private static async Task<int> DumpArchivedFileInfos(DumpArchivedFileInfosOptions options)
         {
             /*Doesn't work for some reason
              * var mc = MainController.Get();
@@ -791,12 +791,12 @@ namespace WolvenKit.Console
                 return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
         }
 
-        private static int RunBundle(BundleOptions options)
+        private static async Task<int> RunBundle(BundleOptions options)
         {
             return 0;
         }
 
-        private static int DumpMetadataStore(DumpMetadataStoreOptions options)
+        private static async Task<int> DumpMetadataStore(DumpMetadataStoreOptions options)
         {
             var ms = new Metadata_Store("C:\\Program Files (x86)\\Steam\\steamapps\\common\\The Witcher 3\\content\\metadata.store");
             using (StreamWriter writer = File.CreateText("C:\\Users\\maxim\\Desktop\\wk\\dump_metadatastore.csv"))

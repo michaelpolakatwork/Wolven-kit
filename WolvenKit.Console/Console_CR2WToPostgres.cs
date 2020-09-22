@@ -19,6 +19,7 @@ namespace WolvenKit.Console
     using System.IO.MemoryMappedFiles;
     using System.Threading;
     using WolvenKit.Common.Extensions;
+    using WolvenKit.CR2W.Types;
 
     public partial class WolvenKitConsole
     {
@@ -28,18 +29,7 @@ namespace WolvenKit.Console
             public Progress(int val) => pgr = val;
         }
 
-        internal struct BatchInsertBufferWrapper
-        {
-            public string CommandHeader;
-            public ConcurrentStack<string> InsertBuffer;
-            public BatchInsertBufferWrapper(string cmdheader)
-            {
-                CommandHeader = cmdheader;
-                InsertBuffer = new ConcurrentStack<string>();
-            }
-        }
-
-        private static int CR2WToPostgres(CR2WToPostgresOptions options)
+        private static async Task<int> CR2WToPostgres(CR2WToPostgresOptions options)
         {
             // NB : There are two main ways to send data to a database : batch inserts and bulky copy.
             // Bulk copy avoids most checks from the db (referential integrity, triggers...) and is much faster.
@@ -69,9 +59,9 @@ namespace WolvenKit.Console
             var propertydict = new ConcurrentDictionary<Tuple<int, string>, int>(); // class_id + propname --> prop_id
 
             int globalfileidcounter; // number of lod2xlod1 files so far
-            // max file_id
 
-            var cmd = new NpgsqlCommand("SELECT max(file_id) from lod0xlod1_file", conn);
+            // max file_id
+            var cmd = new NpgsqlCommand("SELECT max(file_id) from lod2xlod1_file", conn);
             var reader = cmd.ExecuteReader();
             reader.Read();
             globalfileidcounter =reader.GetInt32(0);
@@ -82,7 +72,7 @@ namespace WolvenKit.Console
 
             // lod2dict - lod2 absolute_path --> lod2_file_id
             uint bundlecnt = 0;
-            cmd = new NpgsqlCommand("SELECT _absolute_path, lod0_file_id from lod0_file join physical_inode using(physical_inode_id) where archive_type='Bundle'", conn);
+            cmd = new NpgsqlCommand("SELECT _absolute_path, lod2_file_id from lod2_file join physical_inode using(physical_inode_id) where archive_type='Bundle'", conn);
             reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -96,7 +86,7 @@ namespace WolvenKit.Console
             // lod1dict - lod2_id + absolute_virtual_path --> lod1_file_id
             // lod1x2dict - lod1_id + lod2_id --> cr2w_file_id
             uint lod1cnt = 0;
-            cmd = new NpgsqlCommand("select l01.lod0_file_id, vi._absolute_path, l1.lod1_file_id, l01.file_id from lod1_file l1 join virtual_inode vi using(virtual_inode_id) join lod0xlod1_file l01 using(lod1_file_id) join lod0_file l0 using(lod0_file_id) where l0.archive_type='Bundle'", conn);
+            cmd = new NpgsqlCommand("select l21.lod2_file_id, vi._absolute_path, l1.lod1_file_id, l21.file_id from lod1_file l1 join virtual_inode vi using(virtual_inode_id) join lod2xlod1_file l21 using(lod1_file_id) join lod2_file l2 using(lod2_file_id) where l2.archive_type='Bundle'", conn);
             reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -249,13 +239,16 @@ namespace WolvenKit.Console
                 var bundleitempart = Partitioner.Create(bundleitemssortedbysize, EnumerablePartitionerOptions.NoBuffering);
                 Parallel.ForEach(bundleitempart, new ParallelOptions { MaxDegreeOfParallelism = 15 }, f =>
                 {
-                    //BundleItem f = bundleitemssortedbysize[i];
-
                     lock (bundlepg)
                         if (bundlepg.pgr++ % 10 == 9)
                             bundlepb.Refresh(bundlepg.pgr, f.Name);
 
-                    if (f.Name.Split('.').Last() == "w2l")
+                    if (f.Name.Split('.').Last() == "w2l" ||
+                    f.Name.Contains("redicsv") /*||
+                    f.Name.Split('.').Last() == "w2phase" ||
+                    f.Name.Split('.').Last() == "w2scene" ||
+                    f.Name.Split('.').Last() == "w2comm" ||
+                    f.Name.Split('.').Last().Contains("beh")*/)
                     {
                         //System.Console.WriteLine("Not bothering with buggy files");
                         return;
@@ -277,7 +270,9 @@ namespace WolvenKit.Console
                     int cr2w_file_id = lod1x2dict[Tuple.Create(lod2_file_id, lod1_file_id)];
 
                     var crw = new CR2WFile();
+                    crw.Cr2wFileName = f.Name;
 
+                    CR2WFile fcd = null;
 
                     using (var ms = new MemoryStream())
                     using (var br = new BinaryReader(ms))
@@ -301,16 +296,29 @@ namespace WolvenKit.Console
                         }
                     }
 
-                    // We make a list of cr2w files with the cr2w file and all its embedded cr2w files.
-                    var crwwithembedded = new List<CR2WFile>(Enumerable.Concat(new[] { crw }, crw.embedded.Select(_ => _.GetParsedFile()).ToList()));
+                    // We make a list of cr2w files with the cr2w file and all its embedded cr2w files AND flat compiled data.
+                    var crw_withembedded_withfcd = new List<CR2WFile>(Enumerable.Concat(new[] { crw }, crw.embedded.Select(_ => _.GetParsedFile()).ToList()));
+
+                    if (f.Name.Split('.').Last() == "w2ent")
+                    {
+                        var fcd_cvar = (crw.chunks[0].data as CEntityTemplate).FlatCompiledData;
+                        var fcd_data = (fcd_cvar as CByteArray).Bytes;
+                        if (fcd_data != null && fcd_data.Length > 0)
+                        {
+                            fcd = new CR2WFile();
+                            fcd.Cr2wFileName = "fcd";
+                            fcd.Read(fcd_data);
+                            crw_withembedded_withfcd.Add(fcd);
+                        }
+                    }
 
                     int newfileid;
 
                     var oneconn = new NpgsqlConnection(connString);
                     oneconn.Open();
-                    foreach (var acrw in crwwithembedded)
+                    foreach (var acrw in crw_withembedded_withfcd)
                     {
-                        if (acrw != crwwithembedded.First())
+                        if (acrw != crw_withembedded_withfcd.First())
                         {
                             newfileid = Interlocked.Increment(ref globalfileidcounter);
                             //System.Console.WriteLine(globalfileidcounter);
@@ -320,7 +328,7 @@ namespace WolvenKit.Console
 
                         #region dump_fileheader
                         // File - Fileheader
-                        using (var filewriter = oneconn.BeginBinaryImport("COPY cr2w.file (file_id,lod0_file_id,lod1_file_id,embedder_file_id,version,flags,timestamp,buildversion,filesize,internalbuffersize,crc32,numchunks,file_name) FROM STDIN (FORMAT BINARY)"))
+                        using (var filewriter = oneconn.BeginBinaryImport("COPY cr2w.file (file_id,lod2_file_id,lod1_file_id,embedder_file_id,version,flags,timestamp,buildversion,filesize,internalbuffersize,crc32,numchunks,file_name) FROM STDIN (FORMAT BINARY)"))
                         {
                             var crwfileheader = acrw.GetFileHeader();
 
@@ -353,7 +361,7 @@ namespace WolvenKit.Console
                         #endregion //dump_fileheader
                         #region dump_tableheader
                         // Tableheader
-                        using (var tablewriter = oneconn.BeginBinaryImport("COPY cr2w.tableheaders (file_id,tablenumber,_offset,itemcount,crc32) FROM STDIN (FORMAT BINARY)"))
+                        using (var tablewriter = oneconn.BeginBinaryImport("COPY cr2w._0_header (file_id,tablenumber,_offset,itemcount,crc32) FROM STDIN (FORMAT BINARY)"))
                         {
                             var tableheaders = acrw.GetTableHeaders();
                             for (int j = 0; j < tableheaders.Count(); j++)
@@ -372,7 +380,7 @@ namespace WolvenKit.Console
                         #endregion //dump_tableheader
                         #region dump_import
                         // Import
-                        using (var importwriter = oneconn.BeginBinaryImport("COPY cr2w.importtable (file_id,depotpath,classname,flags) FROM STDIN (FORMAT BINARY)"))
+                        using (var importwriter = oneconn.BeginBinaryImport("COPY cr2w._3_import (file_id,depotpath,classname,flags) FROM STDIN (FORMAT BINARY)"))
                         {
                             var imports = acrw.imports;
                             for (int j = 0; j < imports.Count(); j++)
@@ -390,7 +398,7 @@ namespace WolvenKit.Console
                         #endregion //dump_import
                         #region dump_properties
                         // Properties
-                        using (var propertywriter = oneconn.BeginBinaryImport("COPY cr2w.property (file_id,classname,flags,propname,propflags,hash) FROM STDIN (FORMAT BINARY)"))
+                        using (var propertywriter = oneconn.BeginBinaryImport("COPY cr2w._4_property (file_id,classname,flags,propname,propflags,hash) FROM STDIN (FORMAT BINARY)"))
                         {
                             var properties = acrw.properties;
                             for (int j = 0; j < properties.Count(); j++)
@@ -412,7 +420,7 @@ namespace WolvenKit.Console
                         // Export - Chunk
                         var chunkrecursedresult = new List<(IEditableVariable, int)>();
                         var cvariddict = new Dictionary<IEditableVariable, int>();
-                        using (var exportwriter = oneconn.BeginBinaryImport("COPY cr2w.export (file_id,chunkid,class_id,objectflags,parentchunkid,vparentchunkid,datasize,dataoffset,template,crc32) FROM STDIN (FORMAT BINARY)"))
+                        using (var exportwriter = oneconn.BeginBinaryImport("COPY cr2w._5_export (file_id,chunkid,class_id,objectflags,parentchunkid,vparentchunkid,datasize,dataoffset,template,crc32) FROM STDIN (FORMAT BINARY)"))
                         {
                             var data0 = acrw.chunks[0].data;
                             for (int chunkcounter = 0; chunkcounter < acrw.chunks.Count; chunkcounter++)
@@ -440,9 +448,45 @@ namespace WolvenKit.Console
                             exportwriter.Complete();
                         }
                         #endregion //dump_chunk
+                        #region dump_chunkreferrers
+                        // Export - Chunk
+                        using (var referrerwriter = oneconn.BeginBinaryImport("COPY cr2w.referrers (file_id,referrer_in_array, referrer_type,referrer_name,referrer_value,referrer_chunkname,referred_chunkname) FROM STDIN (FORMAT BINARY)"))
+                        {
+                            for (int chunkcounter = 0; chunkcounter < acrw.chunks.Count; chunkcounter++)
+                            {
+                                var chunk = acrw.chunks[chunkcounter];
+                                if(chunk.Referrers.Count >1)
+                                {
+                                    foreach (var referrer in chunk.Referrers)
+                                    {
+                                        referrerwriter.StartRow();
+                                        referrerwriter.Write(newfileid == -1 ? cr2w_file_id : newfileid, NpgsqlDbType.Integer);
+                                        if (!int.TryParse(referrer.REDName, out _))
+                                        {
+                                            referrerwriter.Write(false, NpgsqlDbType.Boolean);
+                                            referrerwriter.Write(referrer.REDType, NpgsqlDbType.Text);
+                                            referrerwriter.Write(referrer.REDName, NpgsqlDbType.Text);
+                                            referrerwriter.Write(referrer.REDValue, NpgsqlDbType.Text);
+                                        }
+                                        else
+                                        {
+                                            referrerwriter.Write(true, NpgsqlDbType.Boolean);
+                                            referrerwriter.Write(referrer.REDType, NpgsqlDbType.Text);
+                                            referrerwriter.Write(referrer.ParentVar.REDName, NpgsqlDbType.Text);
+                                            referrerwriter.Write(referrer.REDValue, NpgsqlDbType.Text);
+
+                                        }
+                                        referrerwriter.Write(referrer.GetVarChunkIndex(), NpgsqlDbType.Integer);
+                                        referrerwriter.Write(chunkcounter, NpgsqlDbType.Integer);
+                                    }
+                                }
+                            }
+                            referrerwriter.Complete();
+                        }
+                        #endregion //dump_chunkreferrers
                         #region dump_cvar
                         // CVariable
-                        using (var cvarwriter = oneconn.BeginBinaryImport("COPY cr2w.cvar (cvar_id,file_id,varchunkindex,parent_cvar_id,redname,redtype,redvalue) FROM STDIN (FORMAT BINARY)"))
+                        using (var cvarwriter = oneconn.BeginBinaryImport("COPY cr2w._5_export_cvar (cvar_id,file_id,varchunkindex,parent_cvar_id,redname,redtype,redvalue) FROM STDIN (FORMAT BINARY)"))
                         {
                             foreach (var cvart in chunkrecursedresult)
                             {
@@ -457,19 +501,22 @@ namespace WolvenKit.Console
                                 cvarwriter.Write(cvar.REDName, NpgsqlDbType.Text);
                                 cvarwriter.Write(cvar.REDType, NpgsqlDbType.Text);
                                 //cvarwriter.Write(cvar.REDValue, NpgsqlDbType.Text); // There are null bytes in strings...
-                                cvarwriter.Write(Encoding.Convert(iso88591, utf8, ByteArrayRocks.DeleteIn(iso88591.GetBytes(cvar.REDValue), 0x00)), NpgsqlDbType.Text);
+                                if(cvar.REDValue != null)
+                                    cvarwriter.Write(Encoding.Convert(iso88591, utf8, ByteArrayRocks.DeleteIn(iso88591.GetBytes(cvar.REDValue), 0x00)), NpgsqlDbType.Text);
+                                else
+                                    cvarwriter.Write("", NpgsqlDbType.Text);
                             }
                             cvarwriter.Complete();
                         }
                         #endregion //dump_cvar
                         #region dump_buffers
                         // Properties
-                        using (var internalbufferwriter = oneconn.BeginBinaryImport("COPY cr2w.buffers (file_id,flags,_index,_offset,disksize,memsize,crc32,_data) FROM STDIN (FORMAT BINARY)"))
+                        using (var internalbufferwriter = oneconn.BeginBinaryImport("COPY cr2w._6_internalbuffer (file_id,flags,_index,_offset,disksize,memsize,crc32,_data) FROM STDIN (FORMAT BINARY)"))
                         {
                             var buffers = acrw.buffers;
 
-                            if (acrw != crwwithembedded.First() && acrw.embedded.Count() > 0)
-                                System.Console.WriteLine($"Double embbeded found at ${crwwithembedded.First().Cr2wFileName} !");
+                            if (acrw != crw_withembedded_withfcd.First() && acrw.embedded.Count() > 0)
+                                System.Console.WriteLine($"Double embbeded found at ${crw_withembedded_withfcd.First().Cr2wFileName} !");
 
                             for (int j = 0; j < buffers.Count(); j++)
                             {
@@ -490,12 +537,12 @@ namespace WolvenKit.Console
                         #endregion //dump_buffers
                         #region dump_embedded
                         // Embedded
-                        using (var embeddedwriter = oneconn.BeginBinaryImport("COPY cr2w.embedded (file_id,importindex,path,pathhash,dataoffset,datasize,handle) FROM STDIN (FORMAT BINARY)"))
+                        using (var embeddedwriter = oneconn.BeginBinaryImport("COPY cr2w._7_embedded (file_id,importindex,path,pathhash,dataoffset,datasize,handle) FROM STDIN (FORMAT BINARY)"))
                         {
                             var embedded = acrw.embedded;
 
-                            if (acrw != crwwithembedded.First() && acrw.embedded.Count() > 0)
-                                System.Console.WriteLine($"Double embbeded found at ${crwwithembedded.First().Cr2wFileName} !");
+                            if (acrw != crw_withembedded_withfcd.First() && acrw.embedded.Count() > 0)
+                                System.Console.WriteLine($"Double embbeded found at ${crw_withembedded_withfcd.First().Cr2wFileName} !");
 
                             for (int j = 0; j < embedded.Count(); j++)
                             {
@@ -542,13 +589,16 @@ namespace WolvenKit.Console
                     int cvarpostgresid = Interlocked.Increment(ref globalcvarcounter);
                     cvariddict.Add(var, cvarpostgresid);
                     //Only existing aka serialized cvars
-                    List<IEditableVariable> nextl = var.GetExistingVariables(true);
+                    List<IEditableVariable> nextl = var.GetEditableVariables();
                     if (nextl == null)
                         return;
                     foreach (var l in nextl)
                     {
-                        parentedcvars.Add((l, cvarpostgresid));
-                        LoopWrapper(l);
+                        if(l.IsSerialized)
+                        {
+                            parentedcvars.Add((l, cvarpostgresid));
+                            LoopWrapper(l);
+                        }
                     }
 
                 }

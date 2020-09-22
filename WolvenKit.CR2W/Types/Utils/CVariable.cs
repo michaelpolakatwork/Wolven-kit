@@ -249,6 +249,7 @@ namespace WolvenKit.CR2W.Types
         /// <param name="size"></param>
         public virtual void Read(BinaryReader file, uint size)
         {
+
             REDMetaAttribute meta = (REDMetaAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(REDMetaAttribute));
             EREDMetaInfo[] tags = meta?.Keywords;
 
@@ -388,8 +389,6 @@ namespace WolvenKit.CR2W.Types
             {
                 if (member.Name == varname)
                 {
-                    if (this.cr2w.Cr2wFileName == "characters\\npc_entities\\monsters\\vampire_katakan_lvl1.w2ent" && this.REDType == "CBTTaskTeleportDecoratorDef")
-                        System.Console.WriteLine(this.ParentVar);
                     accessor[this, varname] = value;
                     return true;
                 }
