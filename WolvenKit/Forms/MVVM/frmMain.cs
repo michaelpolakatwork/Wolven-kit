@@ -3597,7 +3597,7 @@ Would you like to open the problem steps recorder?", "Bug reporting", MessageBox
             };
             if (Control.ModifierKeys.Equals(Keys.Shift))
             {
-                dlg.Title = "Select w2l/w2w depot folder";
+                dlg.Title = "Select w2l depot folder";
                 dlg.IsFolderPicker = true;
             }
             else

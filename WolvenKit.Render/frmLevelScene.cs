@@ -213,7 +213,7 @@ namespace WolvenKit.Render
             //detect whether its a directory or file
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                var layerFileNames = Directory.GetFiles(inputFilename, "*.w2l");
+                var layerFileNames = Directory.EnumerateFiles(inputFilename, "*.w2l", SearchOption.AllDirectories);
                 foreach(var layerFileName in layerFileNames)
                 {
                     AddLayer(layerFileName, layerFileName.Replace(depot, ""), ref meshId);
