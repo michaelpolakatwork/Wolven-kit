@@ -239,8 +239,18 @@ namespace WolvenKit.Render
             Texture dudtex = driver.GetTexture(meshPath);
             */
             //===============================================
+            FileAttributes attr = File.GetAttributes(inputFilename);
 
-            if (Path.GetExtension(inputFilename) == ".w2w")
+            //detect whether its a directory or file
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                var layerFileNames = Directory.EnumerateFiles(inputFilename, "*.w2l", SearchOption.AllDirectories);
+                foreach(var layerFileName in layerFileNames)
+                {
+                    AddLayer(layerFileName, layerFileName.Replace(depot, ""), ref meshId);
+                }
+            }
+            else if (Path.GetExtension(inputFilename) == ".w2w")
             {
                 CR2WFile world;
                 using (var fs = new FileStream(inputFilename, FileMode.Open, FileAccess.Read))

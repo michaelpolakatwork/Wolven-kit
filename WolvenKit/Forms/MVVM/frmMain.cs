@@ -3590,10 +3590,21 @@ Would you like to open the problem steps recorder?", "Bug reporting", MessageBox
 
         private void sceneViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dlg = new CommonOpenFileDialog() { Title = "Select file" };
-            dlg.Multiselect = false;
-            dlg.Filters.Add(new CommonFileDialogFilter("Files", ".w2w,.w2l"));
-            dlg.InitialDirectory = MainController.Get().Configuration.InitialFileDirectory;
+            var dlg = new CommonOpenFileDialog()
+            {
+                InitialDirectory = MainController.Get().Configuration.InitialFileDirectory,
+                Multiselect = false
+            };
+            if (Control.ModifierKeys.Equals(Keys.Shift))
+            {
+                dlg.Title = "Select w2l depot folder";
+                dlg.IsFolderPicker = true;
+            }
+            else
+            {
+                dlg.Title = "Select w2l/w2w depot file";
+                dlg.Filters.Add(new CommonFileDialogFilter("Files", ".w2w,.w2l"));
+            }
             if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 // parse the w2w and provide information to the scene
