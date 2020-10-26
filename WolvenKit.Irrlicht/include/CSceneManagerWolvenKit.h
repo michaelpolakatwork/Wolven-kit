@@ -311,9 +311,11 @@ namespace scene
         ISceneNode* Light;
 		ISceneNode* SkyDome;
 		ISceneNode* WaterNode;
+        ISceneNode* World;
         IMeshSceneNode* HighlightNode;
 		core::array<ISceneNode*> SolidNodeList;
 
+        ISceneCollisionManager* CollisionManager;
         gui::ICursorControl* CursorControl;
 		IMeshLoader* MeshLoader;
 

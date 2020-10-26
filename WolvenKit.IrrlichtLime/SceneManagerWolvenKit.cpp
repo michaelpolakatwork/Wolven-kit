@@ -19,6 +19,7 @@
 #include "Texture.h"
 #include "VideoDriver.h"
 #include "WriteFile.h"
+#include "SceneCollisionManager.h"
 
 using namespace irr;
 using namespace System;
@@ -56,6 +57,12 @@ MeshWriter^ SceneManagerWolvenKit::CreateMeshWriter(MeshWriterType type)
 CameraSceneNode^ SceneManagerWolvenKit::AddCameraSceneNodeWolvenKit()
 {
     scene::ICameraSceneNode* n = m_SceneManager->addCameraSceneNodeWolvenKit();
+    return CameraSceneNode::Wrap(n);
+}
+
+CameraSceneNode^ SceneManagerWolvenKit::AddCameraSceneNodeMaya()
+{
+    scene::ICameraSceneNode* n = m_SceneManager->addCameraSceneNodeMaya();
     return CameraSceneNode::Wrap(n);
 }
 
@@ -166,6 +173,12 @@ void SceneManagerWolvenKit::DrawAll()
 	m_SceneManager->drawAll();
 }
 
+SceneNode^ SceneManagerWolvenKit::RootNode::get()
+{
+    scene::ISceneNode* n = m_SceneManager->getRootSceneNode();
+    return SceneNode::Wrap(n);
+}
+
 AnimatedMesh^ SceneManagerWolvenKit::GetMesh(String^ filename)
 {
 	LIME_ASSERT(filename != nullptr);
@@ -220,6 +233,12 @@ Scene::MeshManipulator^ SceneManagerWolvenKit::MeshManipulator::get()
 {
 	scene::IMeshManipulator* m = m_SceneManager->getMeshManipulator();
 	return Scene::MeshManipulator::Wrap(m);
+}
+
+Scene::SceneCollisionManager^ SceneManagerWolvenKit::SceneCollisionManager::get()
+{
+    scene::ISceneCollisionManager* m = m_SceneManager->getSceneCollisionManager();
+    return Scene::SceneCollisionManager::Wrap(m);
 }
 
 } // end namespace Scene

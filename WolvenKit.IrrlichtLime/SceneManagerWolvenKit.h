@@ -21,12 +21,14 @@ ref class MeshSceneNode;
 ref class MeshWriter;
 ref class SceneNode;
 ref class TerrainSceneNodeWolvenKit;
+ref class SceneCollisionManager;
 
 public ref class SceneManagerWolvenKit : ReferenceCounted
 {
 public:
 	static SceneManagerWolvenKit^ Create(IrrlichtDevice^ device);
 
+	CameraSceneNode^ AddCameraSceneNodeMaya();
 	CameraSceneNode^ AddCameraSceneNodeWolvenKit();
 
 	SceneNode^ AddEmptySceneNode();
@@ -52,11 +54,13 @@ public:
 
 	bool PostEvent(Event^ e);
 
+	property SceneNode^ RootNode { SceneNode^ get(); }
 	property Video::Colorf^ AmbientLight { Video::Colorf^ get(); void set(Video::Colorf^ value); }
 	property IO::Attributes^ Attributes { IO::Attributes^ get(); }
 	property CameraSceneNode^ ActiveCamera { CameraSceneNode^ get(); void set(CameraSceneNode^ value); }
 	property Scene::MeshManipulator^ MeshManipulator { Scene::MeshManipulator^ get(); }
-	
+	property Scene::SceneCollisionManager^ SceneCollisionManager { Scene::SceneCollisionManager^ get(); }
+
 internal:
 
 	static SceneManagerWolvenKit^ Wrap(scene::ISceneManager* ref);

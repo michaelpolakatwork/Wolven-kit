@@ -42,8 +42,6 @@ namespace WolvenKit.Render
                         foreach (RenderTreeNode rn in t.Nodes)
                         {
                             rn.MeshNode.Drop();
-                            //rn.Position?.Dispose();
-                            //rn.Rotation?.Dispose();
                         }
                     }
                 }
@@ -62,6 +60,8 @@ namespace WolvenKit.Render
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLevelScene));
             this.levelPanel = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.translateModeBtn = new System.Windows.Forms.Button();
+            this.rotateModeBtn = new System.Windows.Forms.Button();
             this.queueSizeBar = new System.Windows.Forms.ProgressBar();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.distanceBar = new System.Windows.Forms.TrackBar();
@@ -71,6 +71,7 @@ namespace WolvenKit.Render
             this.showAllButton = new System.Windows.Forms.ToolStripButton();
             this.sceneView = new System.Windows.Forms.TreeView();
             this.irrlichtPanel = new System.Windows.Forms.Panel();
+            this.saveButton = new System.Windows.Forms.ToolStripButton();
             this.levelPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -98,6 +99,8 @@ namespace WolvenKit.Render
             // 
             // splitContainer.Panel1
             // 
+            this.splitContainer.Panel1.Controls.Add(this.translateModeBtn);
+            this.splitContainer.Panel1.Controls.Add(this.rotateModeBtn);
             this.splitContainer.Panel1.Controls.Add(this.queueSizeBar);
             this.splitContainer.Panel1.Controls.Add(this.progressBar);
             this.splitContainer.Panel1.Controls.Add(this.distanceBar);
@@ -110,6 +113,26 @@ namespace WolvenKit.Render
             this.splitContainer.Size = new System.Drawing.Size(993, 527);
             this.splitContainer.SplitterDistance = 331;
             this.splitContainer.TabIndex = 1;
+            // 
+            // translateModeBtn
+            // 
+            this.translateModeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.translateModeBtn.Image = global::WolvenKit.Render.Properties.Resources.move1;
+            this.translateModeBtn.Location = new System.Drawing.Point(301, 4);
+            this.translateModeBtn.Name = "translateModeBtn";
+            this.translateModeBtn.Size = new System.Drawing.Size(24, 24);
+            this.translateModeBtn.TabIndex = 7;
+            this.translateModeBtn.UseVisualStyleBackColor = true;
+            // 
+            // rotateModeBtn
+            // 
+            this.rotateModeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.rotateModeBtn.Image = global::WolvenKit.Render.Properties.Resources.rotate;
+            this.rotateModeBtn.Location = new System.Drawing.Point(268, 4);
+            this.rotateModeBtn.Name = "rotateModeBtn";
+            this.rotateModeBtn.Size = new System.Drawing.Size(24, 24);
+            this.rotateModeBtn.TabIndex = 6;
+            this.rotateModeBtn.UseVisualStyleBackColor = true;
             // 
             // queueSizeBar
             // 
@@ -139,11 +162,11 @@ namespace WolvenKit.Render
             | System.Windows.Forms.AnchorStyles.Right)));
             this.distanceBar.AutoSize = false;
             this.distanceBar.LargeChange = 1;
-            this.distanceBar.Location = new System.Drawing.Point(82, 3);
+            this.distanceBar.Location = new System.Drawing.Point(130, 3);
             this.distanceBar.Maximum = 5;
             this.distanceBar.Minimum = 1;
             this.distanceBar.Name = "distanceBar";
-            this.distanceBar.Size = new System.Drawing.Size(246, 22);
+            this.distanceBar.Size = new System.Drawing.Size(132, 22);
             this.distanceBar.TabIndex = 3;
             this.distanceBar.Value = 2;
             this.distanceBar.ValueChanged += new System.EventHandler(this.distanceBar_ValueChanged);
@@ -156,7 +179,8 @@ namespace WolvenKit.Render
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addMeshButton,
             this.exportMeshButton,
-            this.showAllButton});
+            this.showAllButton,
+            this.saveButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(35, 25);
@@ -217,11 +241,23 @@ namespace WolvenKit.Render
             this.irrlichtPanel.Name = "irrlichtPanel";
             this.irrlichtPanel.Size = new System.Drawing.Size(658, 527);
             this.irrlichtPanel.TabIndex = 0;
+            this.irrlichtPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.irrlichtPanel_MouseClick);
             this.irrlichtPanel.MouseEnter += new System.EventHandler(this.irrlichtPanel_Enter);
             this.irrlichtPanel.MouseLeave += new System.EventHandler(this.irrlichtPanel_Leave);
             this.irrlichtPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.irrlichtPanel_MouseMove);
             this.irrlichtPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.irrlichtPanel_MouseWheel);
             this.irrlichtPanel.Resize += new System.EventHandler(this.irrlichtPanel_Resize);
+            // 
+            // saveButton
+            // 
+            this.saveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveButton.Image = ((System.Drawing.Image)(resources.GetObject("saveButton.Image")));
+            this.saveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(23, 20);
+            this.saveButton.Text = "toolStripButton1";
+            this.saveButton.ToolTipText = "Save Changes";
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // frmLevelScene
             // 
@@ -235,6 +271,7 @@ namespace WolvenKit.Render
             this.Text = "Level Scene renderer";
             this.Load += new System.EventHandler(this.frmLevelScene_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmLevelScene_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.frmLevelScene_KeyUp);
             this.levelPanel.ResumeLayout(false);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel1.PerformLayout();
@@ -261,5 +298,8 @@ namespace WolvenKit.Render
         private System.Windows.Forms.TrackBar distanceBar;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.ProgressBar queueSizeBar;
+        private System.Windows.Forms.Button rotateModeBtn;
+        private System.Windows.Forms.Button translateModeBtn;
+        private System.Windows.Forms.ToolStripButton saveButton;
     }
 }

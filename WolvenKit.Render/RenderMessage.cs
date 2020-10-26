@@ -18,6 +18,7 @@ namespace WolvenKit.Render
         HIDE_NODE,
         SELECT_NODE,
         DESELECT_NODE,
+        HIGHLIGHT_NODE,
         SHUTDOWN,
         NUM_MESSAGE_TYPES
     };

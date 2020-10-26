@@ -13,12 +13,12 @@ using System.IO.MemoryMappedFiles;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-[assembly: ContractNamespaceAttribute("",    ClrNamespace = "WolvenKit.CR2W")]
+[assembly: ContractNamespaceAttribute("", ClrNamespace = "WolvenKit.CR2W")]
 
 namespace WolvenKit.CR2W
 {
 
-    [DataContract(Namespace ="")]
+    [DataContract(Namespace = "")]
     [StructLayout(LayoutKind.Explicit, Size = 24)]
     public struct CR2WExport
     {
@@ -157,8 +157,8 @@ namespace WolvenKit.CR2W
         public string REDName => REDType + " #" + (ChunkIndex);
 
         public int ChunkIndex => cr2w.chunks.IndexOf(this);
-        private CR2WExportWrapper ParentChunk => ParentChunkIndex==-1 ? null : cr2w.chunks[ParentChunkIndex];
-        public CR2WExportWrapper VirtualParentChunk => VirtualParentChunkIndex==-1 ? null : cr2w.chunks[VirtualParentChunkIndex];
+        private CR2WExportWrapper ParentChunk => ParentChunkIndex == -1 ? null : cr2w.chunks[ParentChunkIndex];
+        public CR2WExportWrapper VirtualParentChunk => VirtualParentChunkIndex == -1 ? null : cr2w.chunks[VirtualParentChunkIndex];
 
         /// <summary>
         /// This property is used as BindingProperty in frmChunkProperties
@@ -253,7 +253,7 @@ namespace WolvenKit.CR2W
             file.BaseStream.Seek(_export.dataOffset, SeekOrigin.Begin);
 
             CreateDefaultData();
-            if(data.REDType== "CBTTaskTeleportDecoratorDef" ||
+            if (data.REDType == "CBTTaskTeleportDecoratorDef" ||
                 data.REDType == "CBTTaskTeleportDef")
             {
                 //System.Console.WriteLine("Not bothering with buggy vars yoo");
@@ -271,7 +271,7 @@ namespace WolvenKit.CR2W
             unknownBytes = new CBytes(cr2w, data, "unknownBytes");
             if (bytesLeft > 0)
             {
-                unknownBytes.Read(file, (uint) bytesLeft);
+                unknownBytes.Read(file, (uint)bytesLeft);
             }
             else if (bytesLeft < 0)
             {
@@ -381,7 +381,7 @@ namespace WolvenKit.CR2W
 
         public void WriteData(BinaryWriter file)
         {
-            _export.dataOffset = (uint) file.BaseStream.Position;
+            _export.dataOffset = (uint)file.BaseStream.Position;
             //_export.className = (ushort)cr2w.GetStringIndex(_type);
 
             var posstart = file.BaseStream.Position;
@@ -397,7 +397,7 @@ namespace WolvenKit.CR2W
                 unknownBytes.Write(file);
             }
 
-            var newsize = (uint) (file.BaseStream.Position - posstart);
+            var newsize = (uint)(file.BaseStream.Position - posstart);
             _export.dataSize = newsize;
         }
 

@@ -15,6 +15,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,15 +106,19 @@ namespace WolvenKit.Render
         private GUIStaticText meshCountText;
         private int totalVertexCount = 0;
         private int totalMeshCount = 0;
+        private MeshPropertyDialog propertiesDlg;
 
         private IrrlichtLime.Scene.SceneNode worldNode;
         private IrrlichtLime.Scene.SceneNode lightNode;
+        private Recti viewPort;
 
         private string inputFilename;
         private readonly string depot;
         private int meshId;
+        private bool pickKeyDown = false;
 
         private System.ComponentModel.BackgroundWorker backgroundLoader;
+        private System.ComponentModel.BackgroundWorker backgroundSearcher;
 
         private void AddTerrain(CClipMap info, ref int meshId)
         {
@@ -208,6 +213,8 @@ namespace WolvenKit.Render
                 {
                     CSectorData sd = (CSectorData)chunk.data;
 
+                    Console.WriteLine($"                                 [{layerName}] : {sd.Unknown1}");
+
                     progressBar.Invoke((MethodInvoker)delegate
                     {
                         progressBar.Maximum = sd.BlockData.Count;
@@ -223,10 +230,10 @@ namespace WolvenKit.Render
                             float rx, ry, rz;
                             MatrixToEuler(rot, out rx, out ry, out rz); // radians
 
+                            //NOTE: Flipping the z axis rotation and the x axis translation since the assets seemed to be mirrored.  RHCS vs LHCS?
                             Vector3Df rotation = new Vector3Df(rx * RADIANS_TO_DEGREES, ry * RADIANS_TO_DEGREES, -rz * RADIANS_TO_DEGREES);
                             Vector3Df translation = new Vector3Df(-position.X.val, position.Y.val, position.Z.val);
 
-                            // now get mesh to apply this to!
                             SBlockDataMeshObject mo = (SBlockDataMeshObject)block.packedObject;
                             ushort meshIndex = mo.meshIndex.val;
                             if (meshIndex > sd.Resources.Count)
@@ -239,7 +246,6 @@ namespace WolvenKit.Render
                             {
                                 continue;
                             }
-                            string meshPath = depot + meshName;
 
                             RenderMessage message = new RenderMessage(MessageType.ADD_MESH_NODE, meshName, translation, rotation, layerNode);
                             commandQueue.Enqueue(message);
@@ -310,11 +316,6 @@ namespace WolvenKit.Render
             e.Result = LoadScene(worker, e);
         }
 
-        //private void LoadSceneProgress(object sender, ProgressChangedEventArgs e)
-        //{
-        //    this.progressBar.Value = e.ProgressPercentage;
-        //}
-
         private void SceneLoaded(object sender, RunWorkerCompletedEventArgs e)
         {
             // First, handle the case where an exception was thrown.
@@ -346,6 +347,63 @@ namespace WolvenKit.Render
             });
         }
 
+
+        private TreeNode FindSceneNode(BackgroundWorker worker, DoWorkEventArgs e)
+        {
+            int id = (int)e.Argument;
+
+            foreach(TreeNode tn in sceneView.Nodes)
+            {
+                foreach (RenderTreeNode rn in tn.Nodes)
+                {
+                    if (rn.MeshNode.ID == id)
+                    {
+                        return rn;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private void SceneNodeFound(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // First, handle the case where an exception was thrown.
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else if (e.Cancelled)
+            {
+                // Next, handle the case where the user canceled 
+                // the operation.
+                // Note that due to a race condition in 
+                // the DoWork event handler, the Cancelled
+                // flag may not have been set, even though
+                // CancelAsync was called.
+                //resultLabel.Text = "Canceled";
+            }
+            else
+            {
+                // Finally, handle the case where the operation succeeded.
+                if (e.Result != null)
+                {
+                    sceneView.SelectedNode = (TreeNode)e.Result;
+                    sceneView.SelectedNode.Expand();
+
+                    propertiesDlg.SetName(System.IO.Path.GetFileName(sceneView.SelectedNode.Text));
+                }
+            }
+        }
+
+        private void FindSceneNode(object sender, DoWorkEventArgs e)
+        {
+            // Get the BackgroundWorker that raised this event.
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            e.Result = FindSceneNode(worker, e);
+        }
+
         public frmLevelScene(string filename, string depotPath, Cache.TextureManager textureManager)
         {
             this.inputFilename = filename;
@@ -368,10 +426,82 @@ namespace WolvenKit.Render
 
             this.distanceBar.Value = 3;
 
+            this.rotateModeBtn.Enabled = false;
+            this.translateModeBtn.Enabled = false;
+            
+            this.propertiesDlg = new MeshPropertyDialog();
+
             this.backgroundLoader = new System.ComponentModel.BackgroundWorker();
             this.backgroundLoader.DoWork += new DoWorkEventHandler(LoadScene);
             this.backgroundLoader.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SceneLoaded);
-            //this.backgroundLoader.ProgressChanged += new ProgressChangedEventHandler(LoadSceneProgress);
+
+            this.backgroundSearcher = new System.ComponentModel.BackgroundWorker();
+            this.backgroundSearcher.DoWork += new DoWorkEventHandler(FindSceneNode);
+            this.backgroundSearcher.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SceneNodeFound);
+        }
+
+        private string GetNodeLevelName(SceneNode node)
+        {
+            foreach (TreeNode tn in sceneView.Nodes)
+            {
+                foreach (RenderTreeNode rn in tn.Nodes)
+                {
+                    if(rn.MeshNode == node)
+                    {
+                        return tn.Text;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public bool CommitChanges()
+        {
+            // TODO: Show a status box with the files as they are saved since
+            // this could take a while
+
+            HashSet<SceneNode> modifications = propertiesDlg.GetModifiedNodes();
+            Dictionary<string, ModifiedLevel> levels = new Dictionary<string, ModifiedLevel>();
+
+            foreach(SceneNode n in modifications)
+            {
+                // get the .w2l file that the node belongs to
+                string name = GetNodeLevelName(n);
+                if(name != null)
+                {
+                    if(levels.TryGetValue(name, out ModifiedLevel lvl))
+                    {
+                        // already exists so just add this node
+                        lvl.ModifiedNodes.Add(n);
+                    }
+                    else
+                    {
+                        // no level yet so make one
+                        ModifiedLevel newLevel = new ModifiedLevel();
+                        newLevel.DepotPath = name;
+                        newLevel.ModifiedNodes.Add(n);
+                        levels.Add(name, newLevel);
+                    }
+                }
+            }
+
+            // update all the files
+            foreach(KeyValuePair<string, ModifiedLevel> entry in levels)
+            {
+#if DEBUG
+                Console.WriteLine($"Would update: {entry.Value.DepotPath}");
+#endif
+                var confirmResult = MessageBox.Show($"Are you sure to overwrite this {entry.Value.DepotPath}?",
+                                                   "Confirm Overwrite!",
+                                                   MessageBoxButtons.YesNo);
+                if (confirmResult == DialogResult.Yes)
+                {
+                    entry.Value.Update();
+                }
+              
+            }
+            return true;
         }
 
         void ProcessCommand()
@@ -402,6 +532,9 @@ namespace WolvenKit.Render
                                 totalVertexCount += mb.VertexCount;
                             }
                             MeshSceneNode meshNode = smgr.AddMeshSceneNode(mesh, worldNode, meshId++, m.Translation, m.Rotation);
+#if DEBUG
+                            meshNode.Name = m.MeshName;
+#endif
                             meshNode.Grab();
 
                             RenderTreeNode rn = new RenderTreeNode(m.MeshName, meshNode);
@@ -480,6 +613,7 @@ namespace WolvenKit.Render
                         break;
                     case MessageType.SELECT_NODE:
                         {
+                            // highlight and 
                             smgr.SelectNode(m.Node);
                             var camera = smgr.ActiveCamera;
 
@@ -491,6 +625,11 @@ namespace WolvenKit.Render
                     case MessageType.DESELECT_NODE:
                         {
                             smgr.DeselectNode();
+                        }
+                        break;
+                    case MessageType.HIGHLIGHT_NODE:
+                        {
+                            smgr.SelectNode(m.Node);
                         }
                         break;
                     case MessageType.SHUTDOWN:
@@ -591,7 +730,7 @@ namespace WolvenKit.Render
                 //    camera.FarValue = (float)Math.Pow(10.0, (double)distanceBar.Value);
                 //});
 
-                var viewPort = driver.ViewPort;
+                viewPort = driver.ViewPort;
                 var lineMat = new IrrlichtLime.Video.Material
                 {
                     Lighting = false
@@ -601,9 +740,9 @@ namespace WolvenKit.Render
                 {
                     if (this.Visible)
                     {
-                        ProcessCommand();
-
                         driver.ViewPort = viewPort;
+
+                        ProcessCommand();
 
                         driver.BeginScene(ClearBufferFlag.All, new IrrlichtLime.Video.Color(0, 0, 100));
                         int val = driver.FPS;
@@ -625,6 +764,8 @@ namespace WolvenKit.Render
                         driver.Draw3DLine(0, 0, 0, 30f, 0, 0, IrrlichtLime.Video.Color.SolidGreen);
                         driver.Draw3DLine(0, 0, 0, 0, 30f, 0, IrrlichtLime.Video.Color.SolidBlue);
                         driver.Draw3DLine(0, 0, 0, 0, 0, 30f, IrrlichtLime.Video.Color.SolidRed);
+
+                        driver.ViewPort = viewPort;
 
                         driver.EndScene();
                     }
@@ -856,7 +997,7 @@ namespace WolvenKit.Render
             {
                 if (device.CursorControl != null)
                 {
-                    device.CursorControl.Visible = false;
+                    device.CursorControl.Visible = true;
                 }
             }
         }
@@ -940,13 +1081,20 @@ namespace WolvenKit.Render
 
             if(sceneView.SelectedNode != null)
             {
+                rotateModeBtn.Enabled = true;
+                translateModeBtn.Enabled = true;
+
                 exportMeshButton.Enabled = true;
+
                 RenderTreeNode rn = (RenderTreeNode)sceneView.SelectedNode;
                 RenderMessage message = new RenderMessage(MessageType.SELECT_NODE, rn.MeshNode);
                 commandQueue.Enqueue(message);
             }
             else
             {
+                rotateModeBtn.Enabled = false;
+                translateModeBtn.Enabled = false;
+
                 exportMeshButton.Enabled = false;
                 RenderMessage message = new RenderMessage(MessageType.DESELECT_NODE);
                 commandQueue.Enqueue(message);
@@ -977,6 +1125,9 @@ namespace WolvenKit.Render
 
         private void irrlichtPanel_Resize(object sender, EventArgs e)
         {
+            if(driver != null)    
+                viewPort = driver.ViewPort;
+
             if (smgr != null)
             {
                 var camera = smgr.ActiveCamera;
@@ -985,6 +1136,8 @@ namespace WolvenKit.Render
                     camera.AspectRatio = (float)irrlichtPanel.Width / (float)irrlichtPanel.Height;
                 }
             }
+
+            propertiesDlg.Location = new Point(this.Location.X + this.Width - propertiesDlg.Width - 10, this.Location.Y + 30);
         }
 
         private void distanceBar_ValueChanged(object sender, EventArgs e)
@@ -1030,6 +1183,11 @@ namespace WolvenKit.Render
                         keyChar = 's';
                     }
                     break;
+                case Keys.ControlKey:
+                    {
+                        pickKeyDown = true;
+                        return;
+                    }
                 default:
                     return; // ignore
             }
@@ -1040,6 +1198,54 @@ namespace WolvenKit.Render
             {
                 lightNode.Position = smgr.ActiveCamera.Position;
             }
+        }
+
+        private void irrlichtPanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            // need to have a click plus the ctrl key down
+            if (pickKeyDown)
+            {
+                ViewFrustum f = smgr.ActiveCamera.ViewFrustum;
+
+                Vector3Df farLeftUp = f.FarLeftUp;
+                Vector3Df lefttoright = f.FarRightUp - farLeftUp;
+                Vector3Df uptodown = f.FarLeftDown - farLeftUp;
+
+                float dx = e.X / (float)viewPort.Width;
+                float dy = e.Y / (float)viewPort.Height;
+
+                Line3Df ray = new Line3Df(f.CameraPosition, farLeftUp + (lefttoright * dx) + (uptodown * dy));
+                SceneNode pickedNode = smgr.SceneCollisionManager.GetSceneNodeFromRayBB(ray);
+
+                if (pickedNode != null)
+                {
+                    RenderMessage message = new RenderMessage(MessageType.HIGHLIGHT_NODE, pickedNode);
+                    commandQueue.Enqueue(message);
+
+                    propertiesDlg.SetProperties(pickedNode);
+                    if(!propertiesDlg.Visible)
+                        propertiesDlg.Show(this);
+
+                    if(backgroundSearcher.IsBusy)
+                    {
+                        backgroundSearcher.CancelAsync();
+                    }
+                    backgroundSearcher.RunWorkerAsync(pickedNode.ID);
+                }
+            }
+        }
+
+        private void frmLevelScene_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey)
+            {
+                pickKeyDown = false;
+            }
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            CommitChanges();
         }
     }
 }

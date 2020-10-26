@@ -123,13 +123,6 @@ namespace scene
 		bool Rotating;
 		bool Moving;
 		bool Translating;
-
-		// for keyboard
-        core::array<SKeyMap> KeyMap;
-        bool CursorKeys[EKA_COUNT];
-
-        bool firstInput;
-
 	};
 
 } // end namespace scene

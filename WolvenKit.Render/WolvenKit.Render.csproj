@@ -135,6 +135,13 @@
     <Compile Include="Animation\ExportAnimation.cs" />
     <Compile Include="Animation\ExportFace.cs" />
     <Compile Include="Animation\IgnorableSerializerContractResolver.cs" />
+    <Compile Include="MeshPropertyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MeshPropertyDialog.Designer.cs">
+      <DependentUpon>MeshPropertyDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModifiedLevel.cs" />
     <Compile Include="RenderMessage.cs" />
     <Compile Include="RenderTreeNode.cs" />
     <Compile Include="CommonData.cs" />
@@ -183,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTerrain.resx">
       <DependentUpon>frmTerrain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MeshPropertyDialog.resx">
+      <DependentUpon>MeshPropertyDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -245,9 +255,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\FindInFile_16x.png" />
     <None Include="Resources\Output_16x.png" />
     <None Include="Resources\AddNodefromFile_354.png" />
+    <None Include="Resources\rotate.png" />
+    <None Include="Resources\move1.png" />
     <Content Include="Terrain\basemap.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

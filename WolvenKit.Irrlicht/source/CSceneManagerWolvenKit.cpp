@@ -11,6 +11,8 @@
 #include "ISceneLoader.h"
 #include "CAttributes.h"
 #include "CW3EntLoader.h"
+#include "CSceneCollisionManager.h"
+#include "CTriangleSelector.h"
 
 #include "os.h"
 #include "debug.h"
@@ -40,6 +42,7 @@
 #endif // _IRR_COMPILE_WITH_WATER_SURFACE_SCENENODE_
 #include "CEmptySceneNode.h"
 #include "CTerrainSceneNodeWolvenKit.h"
+#include "CSceneNodeAnimatorCameraMaya.h"
 #include "CSceneNodeAnimatorCameraWolvenKit.h"
 
 #include <locale.h>
@@ -59,6 +62,7 @@ CSceneManagerWolvenKit::CSceneManagerWolvenKit(video::IVideoDriver* driver, io::
 ,Light(nullptr)
 ,SkyDome(nullptr)
 ,WaterNode(nullptr)
+,World(nullptr)
 ,HighlightNode(nullptr)
 ,MeshLoader(nullptr)
 ,ActiveCamera(nullptr)
@@ -75,6 +79,7 @@ CSceneManagerWolvenKit::CSceneManagerWolvenKit(video::IVideoDriver* driver, io::
     if (CursorControl)
         CursorControl->grab();
 
+    CollisionManager = DBG_NEW CSceneCollisionManager(this, Driver);
 
 	MeshLoader = DBG_NEW CW3EntLoader(this, FileSystem);
 
@@ -100,6 +105,9 @@ CSceneManagerWolvenKit::~CSceneManagerWolvenKit()
 
     if (CursorControl)
         CursorControl->drop();
+
+    if (CollisionManager)
+        CollisionManager->drop();
 
 	if (Light)
 		Light->drop();
@@ -168,6 +176,7 @@ IMeshSceneNode* CSceneManagerWolvenKit::addMeshSceneNode(IMesh* mesh, ISceneNode
 	node->setMaterialFlag(irr::video::E_MATERIAL_FLAG::EMF_BACK_FACE_CULLING, true);
 	node->setMaterialFlag(irr::video::E_MATERIAL_FLAG::EMF_LIGHTING, false);
     node->setVisible(false);
+
 	node->drop();
 	    
 	SolidNodeList.push_back(node);
@@ -228,7 +237,29 @@ ICameraSceneNode* CSceneManagerWolvenKit::addCameraSceneNodeWolvenKit(ISceneNode
     return node;
 }
 
+ICameraSceneNode* CSceneManagerWolvenKit::addCameraSceneNodeMaya(ISceneNode* parent,
+    f32 rotateSpeed, f32 zoomSpeed, f32 translationSpeed, s32 id, f32 distance, bool makeActive)
+{
+    if (!parent)
+        parent = this;
 
+    ICameraSceneNode* node = DBG_NEW CCameraSceneNode(parent, this, id, core::vector3df(), core::vector3df(0, 0, 100));
+
+    if (makeActive)
+        setActiveCamera(node);
+    node->drop();
+
+    if (node)
+    {
+        ISceneNodeAnimator* anm = DBG_NEW CSceneNodeAnimatorCameraMaya(CursorControl,
+            rotateSpeed, zoomSpeed, translationSpeed, distance);
+
+        node->addAnimator(anm);
+        anm->drop();
+    }
+
+    return node;
+}
 //! Adds a skydome scene node. A skydome is a large (half-) sphere with a
 //! panoramic texture on it and is drawn around the camera position.
 ISceneNode* CSceneManagerWolvenKit::addSkyDomeSceneNode(video::ITexture* texture,
@@ -353,6 +384,7 @@ ISceneNode* CSceneManagerWolvenKit::addEmptySceneNode(ISceneNode* parent, s32 id
 	ISceneNode* node = DBG_NEW CEmptySceneNode(parent, this, id);
 	node->drop();
 
+    World = node;
 	return node;
 }
 
@@ -582,16 +614,37 @@ IMeshWriter* CSceneManagerWolvenKit::createMeshWriter(EMESH_WRITER_TYPE type)
 	return nullptr;
 }
 
+ISceneCollisionManager* CSceneManagerWolvenKit::getSceneCollisionManager()
+{
+    return CollisionManager;
+}
+
+ISceneNode* CSceneManagerWolvenKit::getRootSceneNode()
+{
+    if(World != nullptr)
+        return World;
+
+    return this;
+}
+
+ITriangleSelector* CSceneManagerWolvenKit::createTriangleSelector(IMesh* mesh, ISceneNode* node, bool separateMeshbuffers)
+{
+    if (!mesh)
+        return 0;
+
+    return DBG_NEW CTriangleSelector(mesh, node, separateMeshbuffers);
+}
+
+//=========================================================================================
+// not used but must implement
 const core::aabbox3d<f32>& CSceneManagerWolvenKit::getBoundingBox() const
 {
     _IRR_DEBUG_BREAK_IF(true) // Bounding Box of Scene Manager should never be used.
 
-    static const core::aabbox3d<f32> dummy;
+        static const core::aabbox3d<f32> dummy;
     return dummy;
 }
 
-
-// not used but must implement
 IAnimatedMesh* CSceneManagerWolvenKit::getMesh(io::IReadFile* file)
 {
 	return nullptr;
@@ -657,12 +710,6 @@ IOctreeSceneNode* CSceneManagerWolvenKit::addOctreeSceneNode(IMesh* mesh, IScene
 
 ICameraSceneNode* CSceneManagerWolvenKit::addCameraSceneNode(ISceneNode* parent,
     const core::vector3df& position, const core::vector3df& lookat, s32 id, bool makeActive)
-{
-    return nullptr;
-}
-
-ICameraSceneNode* CSceneManagerWolvenKit::addCameraSceneNodeMaya(ISceneNode* parent,
-    f32 rotateSpeed, f32 zoomSpeed, f32 translationSpeed, s32 id, f32 distance, bool makeActive)
 {
     return nullptr;
 }
@@ -793,12 +840,6 @@ IDummyTransformationSceneNode* CSceneManagerWolvenKit::addDummyTransformationSce
 {
     return nullptr;
 }
-
-ISceneNode* CSceneManagerWolvenKit::getRootSceneNode()
-{
-	return nullptr;
-}
-
 ISceneNode* CSceneManagerWolvenKit::getSceneNodeFromId(s32 id, ISceneNode* start)
 {
     return nullptr;
@@ -886,11 +927,6 @@ ISceneNodeAnimator* CSceneManagerWolvenKit::createFollowSplineAnimator(s32 start
     return nullptr;
 }
 
-ITriangleSelector* CSceneManagerWolvenKit::createTriangleSelector(IMesh* mesh, ISceneNode* node, bool separateMeshbuffers)
-{
-    return nullptr;
-}
-
 ITriangleSelector* CSceneManagerWolvenKit::createTriangleSelector(const IMeshBuffer* meshBuffer, irr::u32 materialIndex, ISceneNode* node)
 {
     return nullptr;
@@ -954,11 +990,6 @@ u32 CSceneManagerWolvenKit::getSceneLoaderCount() const
 }
 
 ISceneLoader* CSceneManagerWolvenKit::getSceneLoader(u32 index) const
-{
-    return nullptr;
-}
-
-ISceneCollisionManager* CSceneManagerWolvenKit::getSceneCollisionManager()
 {
     return nullptr;
 }
