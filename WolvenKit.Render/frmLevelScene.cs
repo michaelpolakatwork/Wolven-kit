@@ -733,11 +733,15 @@ namespace WolvenKit.Render
                     Lighting = false
                 };
 
+                int gizmoX = (int)(irrlichtPanel.Width * 0.92f);
+                int gizmoY = (int)(irrlichtPanel.Height * 0.92f);
+                var gizmoViewPort = new Recti(gizmoX, gizmoY, irrlichtPanel.Width, irrlichtPanel.Height);
+
                 while (device.Run())
                 {
                     if (this.Visible)
                     {
-                        driver.ViewPort = viewPort;
+                        //driver.ViewPort = viewPort;
 
                         ProcessCommand();
 
@@ -749,7 +753,7 @@ namespace WolvenKit.Render
                         gui.DrawAll();
 
                         // draw xyz axis right bottom
-                        driver.ViewPort = new Recti(irrlichtPanel.Width - 100, irrlichtPanel.Height - 80, irrlichtPanel.Width, irrlichtPanel.Height);
+                        driver.ViewPort = gizmoViewPort;
 
                         driver.SetMaterial(lineMat);
                         var matrix = new Matrix(new Vector3Df(0, 0, 0), smgr.ActiveCamera.ModelRotation);
@@ -1122,9 +1126,6 @@ namespace WolvenKit.Render
 
         private void irrlichtPanel_Resize(object sender, EventArgs e)
         {
-            if(driver != null)    
-                viewPort = driver.ViewPort;
-
             if (smgr != null)
             {
                 var camera = smgr.ActiveCamera;
