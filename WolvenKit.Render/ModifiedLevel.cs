@@ -73,16 +73,13 @@ namespace WolvenKit.Render
                         {
                             SBlockDataMeshObject mo = (SBlockDataMeshObject)block.packedObject;
                             ushort meshIndex = mo.meshIndex.val;
+                            string meshName = Path.GetFileName(sd.Resources[meshIndex].pathHash.val);
 
                             foreach (SceneNode sn in ModifiedNodes)
                             {
-                                if (meshIndex == (short)sn.ID)
+                                string modifiedMeshName = Path.GetFileName(sn.Name);
+                                if (meshName.Equals(modifiedMeshName))
                                 {
-#if DEBUG
-                                    string meshName = sd.Resources[meshIndex].pathHash.val;
-                                    string modifiedMeshName = sn.Name;
-#endif
-
                                     Vector3Df pos = sn.Position;
                                     Vector3Df rot = sn.Rotation;
 
@@ -103,7 +100,7 @@ namespace WolvenKit.Render
                 }
             }
 
-            using (var fs = new FileStream(DepotPath, FileMode.Open, FileAccess.Write))
+            using (var fs = new FileStream(DepotPath, FileMode.Open, FileAccess.ReadWrite))
             using (var writer = new BinaryWriter(fs))
             {
                 layer.Write(writer);

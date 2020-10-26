@@ -489,15 +489,12 @@ namespace WolvenKit.Render
             // update all the files
             foreach(KeyValuePair<string, ModifiedLevel> entry in levels)
             {
-#if DEBUG
-                Console.WriteLine($"Would update: {entry.Value.DepotPath}");
-#endif
                 var confirmResult = MessageBox.Show($"Are you sure to overwrite this {entry.Value.DepotPath}?",
                                                    "Confirm Overwrite!",
                                                    MessageBoxButtons.YesNo);
                 if (confirmResult == DialogResult.Yes)
                 {
-                    entry.Value.Update();
+                    entry.Value.Update(); // Not yet working
                 }
               
             }
